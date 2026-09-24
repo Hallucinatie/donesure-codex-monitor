@@ -19,6 +19,7 @@
       --accent-ink: #111500;
       --green: #58db87;
       --blue: #70aaff;
+      --orange: #ffb454;
     }
 
     * { box-sizing: border-box; }
@@ -69,7 +70,8 @@
     h1 { margin: 6px 0 5px; max-width: 960px; font-size: clamp(2rem, 3.6vw, 4rem); line-height: 1; letter-spacing: -.055em; }
     .hero p { max-width: 800px; margin: 0; color: #aab4bf; font-size: .9rem; line-height: 1.45; }
     .promise { flex: 0 0 auto; display: flex; gap: 8px; flex-wrap: wrap; justify-content: end; }
-    .promise span { border: 1px solid #38414b; border-radius: 999px; padding: 7px 10px; color: #cdd4db; background: rgba(18,22,27,.78); font-size: .62rem; text-transform: uppercase; letter-spacing: .08em; }
+    .promise span, .promise a { border: 1px solid #38414b; border-radius: 999px; padding: 7px 10px; color: #cdd4db; background: rgba(18,22,27,.78); font-size: .62rem; text-transform: uppercase; letter-spacing: .08em; text-decoration: none; }
+    .promise a { border-color: rgba(216,255,67,.42); color: var(--accent); }
 
     .journey {
       width: min(1720px, calc(100% - 48px));
@@ -128,6 +130,8 @@
     .metric strong { display: block; margin-top: 1px; font-size: .5rem; }
     .result { margin: 5px 0; padding: 6px; border: 1px solid #303842; border-radius: 8px; background: #181d23; color: #d7dde3; font-size: .44rem; line-height: 1.35; }
     .result strong { display: block; margin-bottom: 2px; color: var(--accent); font-size: .35rem; text-transform: uppercase; letter-spacing: .07em; }
+    .risk-line { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin-top: 4px; padding-top: 4px; border-top: 1px solid #303842; color: #ffd29a; }
+    .risk-line b { font-size: .35rem; text-transform: uppercase; letter-spacing: .05em; }
     .actions { display: grid; gap: 4px; margin-top: auto; }
     .watch-button { border: 0; border-radius: 8px; padding: 5px; background: #2b3138; font-size: .43rem; font-weight: 850; cursor: pointer; }
     .watch-button.primary { background: var(--accent); color: var(--accent-ink); }
@@ -154,6 +158,66 @@
     .node { border: 1px solid #36404a; border-radius: 999px; padding: 6px 9px; background: #15191e; color: #d4dae0; font-size: .61rem; }
     .arrow { color: var(--accent); font-size: .7rem; }
 
+    .complex-panel {
+      width: min(1720px, calc(100% - 48px));
+      margin: 0 auto 48px;
+      padding: clamp(22px, 3vw, 42px);
+      border: 1px solid #343d47;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 22% 20%, rgba(255,180,84,.09), transparent 24rem),
+        radial-gradient(circle at 82% 70%, rgba(112,170,255,.08), transparent 28rem),
+        linear-gradient(145deg, #12161c, #090b0f);
+      box-shadow: 0 34px 90px rgba(0,0,0,.34);
+    }
+    .complex-header { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 28px; }
+    .complex-header h2 { margin: 7px 0 6px; max-width: 780px; font-size: clamp(1.7rem, 3vw, 3rem); line-height: 1.03; letter-spacing: -.045em; }
+    .complex-header p { margin: 0; max-width: 720px; color: #a9b3bd; font-size: .85rem; line-height: 1.5; }
+    .principle { flex: 0 0 auto; padding: 10px 13px; border: 1px solid rgba(216,255,67,.32); border-radius: 13px; background: rgba(216,255,67,.06); color: #dff780; font-size: .68rem; line-height: 1.45; }
+    .complex-grid { display: grid; grid-template-columns: minmax(250px,.7fr) minmax(250px,.72fr) minmax(430px,1.25fr); gap: 20px; align-items: stretch; }
+    .scenario, .device-showcase, .layers { border: 1px solid rgba(64,74,85,.7); border-radius: 20px; background: rgba(14,17,22,.76); }
+    .scenario { padding: 22px; }
+    .scenario-label { color: var(--orange); font-size: .58rem; font-weight: 850; text-transform: uppercase; letter-spacing: .12em; }
+    .scenario h3 { margin: 8px 0 7px; font-size: 1.18rem; line-height: 1.15; letter-spacing: -.025em; }
+    .scenario > p { margin: 0 0 18px; color: var(--muted); font-size: .72rem; line-height: 1.5; }
+    .scenario-facts { display: grid; gap: 8px; }
+    .scenario-fact { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; padding: 10px; border-radius: 12px; background: #171c22; }
+    .scenario-fact span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; background: #252c34; color: var(--accent); font-size: .68rem; font-weight: 900; }
+    .scenario-fact strong { display: block; font-size: .72rem; }
+    .scenario-fact small { display: block; margin-top: 2px; color: var(--muted); font-size: .61rem; line-height: 1.35; }
+    .device-showcase { display: grid; place-items: center; padding: 22px 18px; background: linear-gradient(180deg, rgba(28,33,40,.72), rgba(10,12,16,.78)); }
+    .large-watch-wrap { position: relative; display: grid; place-items: center; padding: 48px 22px; }
+    .large-strap { position: absolute; left: 50%; width: 102px; transform: translateX(-50%); border: 1px solid #48515b; background: linear-gradient(90deg,#171a1e,#3d454e 50%,#171a1e); }
+    .large-strap.top { top: 0; height: 76px; border-radius: 23px 23px 6px 6px; }
+    .large-strap.bottom { bottom: 0; height: 82px; border-radius: 6px 6px 24px 24px; }
+    .large-watch { z-index: 1; width: 214px; height: 260px; padding: 9px; border: 9px solid #3d454e; border-radius: 58px; background: #050607; box-shadow: inset 0 0 0 1px #111, 0 28px 50px rgba(0,0,0,.5), 0 0 0 1px #69747f; position: relative; }
+    .large-watch::after { content: ""; position: absolute; right: -15px; top: 58px; width: 6px; height: 40px; border-radius: 0 6px 6px 0; background: #68727d; }
+    .large-screen { height: 100%; padding: 13px 14px; display: flex; flex-direction: column; border-radius: 43px; background: radial-gradient(circle at 50% 0%, #1a2026, #07090c 62%); }
+    .large-screen .time { font-size: .5rem; }
+    .large-screen .app { font-size: .5rem; }
+    .large-screen h3 { margin: 6px 0 4px; font-size: .95rem; line-height: 1.12; }
+    .summary-box { margin: 5px 0; padding: 8px; border: 1px solid #333c45; border-radius: 10px; background: #181d23; }
+    .summary-box span { display: block; color: var(--orange); font-size: .42rem; font-weight: 850; text-transform: uppercase; letter-spacing: .07em; }
+    .summary-box p { margin: 3px 0 0; color: #d9dee3; font-size: .56rem; line-height: 1.38; }
+    .finding-list { display: grid; gap: 4px; margin: 3px 0 6px; }
+    .finding { display: flex; align-items: center; gap: 6px; color: #b7c0ca; font-size: .49rem; }
+    .finding::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
+    .layers { padding: 20px; display: flex; flex-direction: column; }
+    .layers-title { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 13px; }
+    .layers-title strong { font-size: .82rem; }
+    .layers-title span { color: var(--muted); font-size: .62rem; }
+    .layer-list { display: grid; gap: 9px; }
+    .layer { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; padding: 12px; border: 1px solid #2f3740; border-radius: 14px; background: #151a20; }
+    .layer-number { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: #232a32; color: var(--accent); font-weight: 900; font-size: .72rem; }
+    .layer strong { display: block; font-size: .74rem; }
+    .layer p { margin: 2px 0 0; color: var(--muted); font-size: .62rem; line-height: 1.35; }
+    .layer-tag { border: 1px solid #3c4650; border-radius: 999px; padding: 5px 8px; color: #cbd2d9; font-size: .54rem; white-space: nowrap; }
+    .approval { margin-top: auto; padding: 12px; border: 1px solid rgba(255,180,84,.32); border-radius: 14px; background: rgba(255,180,84,.07); display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .approval strong { display: block; color: #ffd29a; font-size: .69rem; }
+    .approval p { margin: 2px 0 0; color: #b8a58e; font-size: .59rem; line-height: 1.35; }
+    .approval button { border: 1px solid #705b41; border-radius: 9px; padding: 7px 9px; background: #2b241a; color: #ffd29a; font-size: .58rem; font-weight: 800; cursor: pointer; }
+
     .toast { position: fixed; right: 24px; bottom: 24px; width: min(350px, calc(100% - 32px)); padding: 13px 15px; border: 1px solid #56616c; border-radius: 15px; background: #1c2127; box-shadow: 0 18px 48px rgba(0,0,0,.5); transform: translateY(24px); opacity: 0; pointer-events: none; transition: .22s; z-index: 20; }
     .toast.show { opacity: 1; transform: translateY(0); }
     .toast strong { display: block; font-size: .8rem; }
@@ -170,15 +234,23 @@
       .watch { width: 176px; height: 216px; }
       .hero { align-items: flex-start; flex-direction: column; }
       .promise { justify-content: flex-start; }
+      .complex-grid { grid-template-columns: 1fr 1fr; }
+      .layers { grid-column: 1 / -1; }
     }
     @media (max-width: 720px) {
       .connection { display: none; }
-      .hero, .journey { width: calc(100% - 24px); }
+      .hero, .journey, .complex-panel { width: calc(100% - 24px); }
       .hero { margin-top: 20px; }
       .steps { grid-template-columns: 1fr; }
       .step::after { display: none !important; }
       .watch { width: 186px; height: 228px; }
       .journey-head { align-items: flex-start; flex-direction: column; }
+      .complex-header { align-items: flex-start; flex-direction: column; }
+      .complex-grid { grid-template-columns: 1fr; }
+      .layers { grid-column: auto; }
+      .layer { grid-template-columns: 42px 1fr; }
+      .layer-tag { grid-column: 2; justify-self: start; }
+      .approval { align-items: flex-start; flex-direction: column; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -193,7 +265,7 @@
 
   <section class="hero">
     <div><div class="eyebrow">How the prototype works</div><h1>Six moments. One continuous Codex task.</h1><p>Start with a verified completion alert, ask a question by voice, give Codex a new command, and receive the result—without breaking context or returning to your Mac.</p></div>
-    <div class="promise"><span>Verified results</span><span>Voice first</span><span>Same task context</span></div>
+    <div class="promise"><span>Verified results</span><span>Voice first</span><span>Same task context</span><a href="#complex-reply">Complex replies ↓</a></div>
   </section>
 
   <main class="journey">
@@ -228,12 +300,12 @@
       </article>
 
       <article class="step" data-step="4">
-        <div class="step-heading"><span class="number">4</span><span><strong>Read Codex’s reply</strong><small>Concise answer + haptic feedback</small></span></div>
+        <div class="step-heading"><span class="number">4</span><span><strong>Understand the reply</strong><small>Conclusion first, detail on demand</small></span></div>
         <div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen">
-          <div class="time"><span>9:42</span><span>●</span></div><span class="app">Codex replied</span><h2>What changed</h2><div class="result"><strong>Codex</strong>Moved checkout validation into PaymentService and added 14 unit tests. All 68 pass.</div>
-          <div class="actions"><button class="watch-button primary jump" data-target="5">Reply by voice</button><button class="watch-button done">Done</button></div>
+          <div class="time"><span>9:42</span><span>●</span></div><span class="app">Codex replied</span><h2>Refactor complete</h2><div class="result"><strong>Quick answer</strong>All tests pass, but two compatibility risks need review.<div class="risk-line"><b>2 warnings</b><span>Details →</span></div></div>
+          <div class="actions"><button class="watch-button primary complex-jump">Explain risks</button><button class="watch-button handoff">Open full reply</button></div>
         </div></div></div>
-        <div class="why"><span>User gets clarity</span><p>The watch gives the answer; long diffs remain available on iPhone or Mac.</p></div>
+        <div class="why"><span>User gets clarity</span><p>Lead with the conclusion, expose risks, and move long details to a larger screen.</p></div>
       </article>
 
       <article class="step" data-step="5">
@@ -257,6 +329,45 @@
 
     <div class="system-flow" aria-label="Voice message routing"><span class="flow-label">Behind every voice action</span><span class="node">Apple Watch captures voice</span><span class="arrow">→</span><span class="node">iPhone transcribes</span><span class="arrow">→</span><span class="node">DoneSure adds context</span><span class="arrow">→</span><span class="node">Codex runs on Mac</span><span class="arrow">→</span><span class="node">Watch receives reply</span></div>
   </main>
+
+  <section class="complex-panel" id="complex-reply" aria-labelledby="complex-title">
+    <div class="complex-header">
+      <div><div class="eyebrow">When Codex has more to say</div><h2 id="complex-title">Complex answers unfold in layers—not in tiny text.</h2><p>The watch provides enough information to understand the outcome and choose the next action. Explanation, evidence, and full technical output appear only when the user asks for them.</p></div>
+      <div class="principle">Watch = understand + decide<br>iPhone / Mac = inspect + act</div>
+    </div>
+
+    <div class="complex-grid">
+      <article class="scenario">
+        <span class="scenario-label">Example scenario</span>
+        <h3>A successful refactor with two compatibility risks</h3>
+        <p>Codex returns a long explanation, several code references, test output, and a recommended migration plan.</p>
+        <div class="scenario-facts">
+          <div class="scenario-fact"><span>1</span><div><strong>Lead with the conclusion</strong><small>“Refactor complete. All 68 tests pass.”</small></div></div>
+          <div class="scenario-fact"><span>2</span><div><strong>Surface exceptions</strong><small>Show two warnings instead of the entire analysis.</small></div></div>
+          <div class="scenario-fact"><span>3</span><div><strong>Offer the next decision</strong><small>Explain by voice or hand off the full reply.</small></div></div>
+        </div>
+      </article>
+
+      <article class="device-showcase" aria-label="Complex Codex reply on Apple Watch">
+        <div class="large-watch-wrap"><div class="large-strap top"></div><div class="large-strap bottom"></div><div class="large-watch"><div class="large-screen">
+          <div class="time"><span>9:42</span><span>●</span></div><span class="app">Codex · Detailed reply</span><h3>Refactor complete</h3>
+          <div class="summary-box"><span>Quick answer</span><p>All 68 tests pass, but two compatibility risks need review.</p></div>
+          <div class="finding-list"><div class="finding">Legacy Safari checkout</div><div class="finding">Older payment adapter</div></div>
+          <div class="actions"><button class="watch-button primary explain-button">Why is this risky?</button><button class="watch-button handoff">Open full reply</button></div>
+        </div></div></div>
+      </article>
+
+      <article class="layers">
+        <div class="layers-title"><strong>Progressive disclosure</strong><span>Right detail, right device</span></div>
+        <div class="layer-list">
+          <div class="layer"><span class="layer-number">01</span><div><strong>Glance on Apple Watch</strong><p>One-sentence conclusion, up to three findings, risk level, and clear next actions.</p></div><span class="layer-tag">5–10 seconds</span></div>
+          <div class="layer"><span class="layer-number">02</span><div><strong>Clarify by voice</strong><p>Ask “Why is this risky?” or “What should I do next?” and receive a concise spoken answer.</p></div><span class="layer-tag">Hands-free</span></div>
+          <div class="layer"><span class="layer-number">03</span><div><strong>Inspect on iPhone or Mac</strong><p>Open the full explanation, code diff, logs, citations, and all recommended changes in the same Codex task.</p></div><span class="layer-tag">Full context</span></div>
+        </div>
+        <div class="approval"><div><strong>Approval required for high-impact actions</strong><p>Deleting files, merging a PR, or publishing a release always moves to iPhone or Mac for review.</p></div><button class="approval-button">Review on iPhone</button></div>
+      </article>
+    </div>
+  </section>
 
   <div class="toast" id="toast" role="status"><strong id="toastTitle"></strong><span id="toastBody"></span></div>
   <script>
@@ -288,6 +399,12 @@
     });
     document.querySelectorAll('.handoff').forEach(button => button.addEventListener('click', () => showToast('Handing off to iPhone','The full task opens with the same conversation context.')));
     document.querySelectorAll('.done').forEach(button => button.addEventListener('click', () => showToast('Action closed','The Codex task remains available in DoneSure history.')));
+    document.querySelector('.complex-jump').addEventListener('click', () => {
+      document.getElementById('complex-reply').scrollIntoView({behavior:'smooth', block:'start'});
+      showToast('Complex reply expanded','The conclusion stays on your wrist; details unfold only when requested.');
+    });
+    document.querySelector('.explain-button').addEventListener('click', () => showToast('Voice explanation ready','Codex: “These integrations rely on APIs that changed in the refactor.”'));
+    document.querySelector('.approval-button').addEventListener('click', () => showToast('Review opened on iPhone','The same Codex task opens with risks, diff, and approval controls.'));
   </script>
 </body>
 </html>
