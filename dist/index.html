@@ -215,6 +215,76 @@
     .prototype-note { grid-column: 1 / -1; border: 1px dashed #39414a; border-radius: 15px; padding: 12px 16px; color: #9ba5b0; font-size: .79rem; display: flex; justify-content: space-between; gap: 14px; align-items: center; }
     .prototype-note a { color: var(--accent); text-underline-offset: 3px; }
 
+    .aw-section {
+      margin: 8px 24px 34px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 16% 0%, rgba(216,255,67,.08), transparent 24rem),
+        #0d1014;
+    }
+    .aw-header { padding: 25px 25px 18px; display: flex; justify-content: space-between; align-items: end; gap: 22px; }
+    .aw-header .eyebrow { color: var(--accent); }
+    .aw-header h2 { margin: 6px 0 5px; font-size: clamp(1.45rem, 2.5vw, 2.35rem); line-height: 1.08; letter-spacing: -.04em; }
+    .aw-header p { margin: 0; color: var(--muted); font-size: .85rem; max-width: 680px; }
+    .aw-connection { flex: 0 0 auto; border: 1px solid #39414a; border-radius: 999px; padding: 8px 12px; font-size: .72rem; color: #c7cfd7; display: flex; align-items: center; gap: 8px; background: #13171c; }
+
+    .aw-strip-wrap { overflow-x: auto; padding: 6px 24px 23px; scroll-snap-type: x mandatory; scrollbar-color: #48515b #171b20; }
+    .aw-strip { width: max-content; display: flex; gap: 38px; padding: 5px 3px 14px; }
+    .aw-step { width: 238px; scroll-snap-align: start; position: relative; }
+    .aw-step:not(:last-child)::after { content: "→"; position: absolute; right: -28px; top: 195px; color: #59636e; font-size: 1.1rem; }
+    .aw-step-head { min-height: 62px; display: grid; grid-template-columns: 30px 1fr; gap: 9px; align-items: start; }
+    .aw-number { width: 29px; height: 29px; border-radius: 9px; display: grid; place-items: center; color: var(--accent-ink); background: var(--accent); font-size: .72rem; font-weight: 900; }
+    .aw-step-head strong { display: block; font-size: .8rem; }
+    .aw-step-head small { display: block; color: var(--muted); font-size: .65rem; margin-top: 2px; line-height: 1.35; }
+    .aw-watch-wrap { display: grid; place-items: center; position: relative; padding: 26px 0; }
+    .aw-strap { position: absolute; width: 86px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg,#191c20,#343a42 50%,#191c20); border: 1px solid #3b424a; }
+    .aw-strap.top { height: 51px; top: 0; border-radius: 18px 18px 5px 5px; }
+    .aw-strap.bottom { height: 56px; bottom: 0; border-radius: 5px 5px 19px 19px; }
+    .aw-watch {
+      width: 184px; height: 222px; padding: 8px; border: 8px solid #373e46; border-radius: 48px; background: #050607;
+      box-shadow: inset 0 0 0 1px #111, 0 22px 38px rgba(0,0,0,.38), 0 0 0 1px #555f69; position: relative; z-index: 1;
+    }
+    .aw-watch::after { content: ""; position: absolute; right: -14px; top: 50px; width: 6px; height: 34px; border-radius: 0 6px 6px 0; background: #59626d; }
+    .aw-screen { height: 100%; border-radius: 36px; background: #080a0d; overflow: hidden; padding: 10px 11px; display: flex; flex-direction: column; }
+    .aw-time { display: flex; justify-content: space-between; color: #8e98a3; font-size: .48rem; margin-bottom: 5px; }
+    .aw-app { color: var(--accent); font-size: .48rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+    .aw-screen h3 { margin: 5px 0 3px; font-size: .83rem; line-height: 1.13; letter-spacing: -.025em; }
+    .aw-task { color: #d2d8de; font-size: .58rem; font-weight: 760; }
+    .aw-copy { color: #a9b2bc; font-size: .54rem; line-height: 1.4; margin: 5px 0; }
+    .aw-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 6px 0; }
+    .aw-metric { border-radius: 8px; padding: 6px; background: #181c21; border: 1px solid #292f36; }
+    .aw-metric span { display: block; color: #8d97a2; font-size: .4rem; text-transform: uppercase; letter-spacing: .05em; }
+    .aw-metric strong { display: block; font-size: .58rem; margin-top: 1px; }
+    .aw-actions { display: grid; gap: 4px; margin-top: auto; }
+    .aw-button { border: 0; border-radius: 8px; padding: 6px 5px; background: #2b3138; cursor: pointer; font-size: .5rem; font-weight: 850; }
+    .aw-button.primary { background: var(--accent); color: var(--accent-ink); }
+    .aw-button:hover { filter: brightness(1.15); }
+    .aw-result { margin: 6px 0; padding: 7px; border: 1px solid #2d343d; border-radius: 9px; background: #171b20; color: #d7dde2; font-size: .52rem; line-height: 1.4; }
+    .aw-result strong { display: block; color: var(--accent); font-size: .43rem; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 3px; }
+    .aw-orb { width: 48px; height: 48px; border-radius: 50%; margin: 10px auto 4px; display: grid; place-items: center; background: radial-gradient(circle, rgba(216,255,67,.24), rgba(216,255,67,.04)); border: 1px solid #454f59; position: relative; }
+    .aw-orb::before { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid rgba(216,255,67,.35); opacity: 0; }
+    .is-listening .aw-orb::before { animation: aw-pulse 1s infinite; }
+    .aw-mic { font-size: 1rem; }
+    .aw-wave { height: 20px; display: flex; justify-content: center; align-items: center; gap: 2px; }
+    .aw-wave i { width: 2px; height: 5px; border-radius: 999px; background: var(--accent); }
+    .is-listening .aw-wave i { animation: aw-wave .6s infinite alternate; }
+    .aw-wave i:nth-child(2), .aw-wave i:nth-child(6) { animation-delay: .1s; }
+    .aw-wave i:nth-child(3), .aw-wave i:nth-child(5) { animation-delay: .2s; }
+    .aw-wave i:nth-child(4) { animation-delay: .3s; }
+    .aw-spoken { text-align: center; color: #f2f4f5; font-size: .58rem; line-height: 1.35; margin: 3px 0; }
+    .aw-listening { text-align: center; color: var(--muted); font-size: .46rem; }
+    @keyframes aw-pulse { from { transform: scale(.85); opacity: .9; } to { transform: scale(1.3); opacity: 0; } }
+    @keyframes aw-wave { from { height: 4px; } to { height: 18px; } }
+
+    .aw-caption { margin-top: 8px; border: 1px solid #2f3740; background: #13171c; border-radius: 12px; padding: 9px 10px; min-height: 69px; }
+    .aw-caption span { display: block; color: var(--accent); font-size: .5rem; text-transform: uppercase; font-weight: 850; letter-spacing: .08em; }
+    .aw-caption p { color: #aeb7c0; font-size: .62rem; line-height: 1.4; margin: 4px 0 0; }
+    .aw-system-flow { border-top: 1px solid var(--line); padding: 15px 24px 18px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; color: #aab3bd; font-size: .7rem; }
+    .aw-node { border: 1px solid #353e47; background: #15191e; border-radius: 999px; padding: 7px 10px; color: #dbe0e5; }
+    .aw-arrow { color: var(--accent); }
+
     .toast {
       position: fixed; right: 26px; bottom: 26px; width: min(360px, calc(100% - 36px));
       border: 1px solid #55606c; border-radius: 15px; background: #1a1f25; color: #fff;
@@ -241,6 +311,8 @@
       .devices { grid-column: auto; }
       .task-list { grid-template-columns: 1fr; }
       .prototype-note { grid-column: auto; align-items: flex-start; flex-direction: column; }
+      .aw-section { margin: 8px 14px 28px; }
+      .aw-header { align-items: flex-start; flex-direction: column; }
     }
 
     @media (max-width: 520px) {
@@ -292,7 +364,7 @@
         </div>
         <div class="top-actions">
           <div class="connection"><span class="dot"></span>Mac Studio · Online</div>
-          <a class="btn btn-link watch-flow-link" href="watch.html">Apple Watch flow</a>
+          <a class="btn btn-link watch-flow-link" href="#apple-watch-flow">Apple Watch flow</a>
           <button class="btn" id="resetDemo">Reset demo</button>
           <button class="btn primary" id="nextEvent">Simulate next event</button>
         </div>
@@ -368,6 +440,89 @@
 
         <div class="prototype-note">
           <span><strong>Prototype tip:</strong> Select a task or click “Simulate next event” to experience Running → Needs input → Verifying → Verified complete.</span>
+        </div>
+      </section>
+
+      <section class="aw-section" id="apple-watch-flow" aria-labelledby="aw-title">
+        <div class="aw-header">
+          <div>
+            <div class="eyebrow">Apple Watch end-to-end flow</div>
+            <h2 id="aw-title">Codex finishes. Your wrist takes it from here.</h2>
+            <p>All six moments are shown in one continuous strip: receive a verified completion alert, ask a question by voice, continue the task, and hand off only when a larger screen is useful.</p>
+          </div>
+          <div class="aw-connection"><span class="dot"></span>Watch ↔ iPhone ↔ Mac connected</div>
+        </div>
+
+        <div class="aw-strip-wrap" aria-label="Scrollable Apple Watch interaction storyboard">
+          <div class="aw-strip" id="awStoryStrip">
+            <article class="aw-step" data-aw-step="1">
+              <div class="aw-step-head"><span class="aw-number">1</span><span><strong>Completion alert</strong><small>Haptic tap + verified outcome</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen">
+                <div class="aw-time"><span>9:41</span><span>●</span></div><span class="aw-app">✓ DoneSure</span><h3>Task complete</h3><div class="aw-task">Refactor payment module</div>
+                <div class="aw-metrics"><div class="aw-metric"><span>Tests</span><strong>68 / 68</strong></div><div class="aw-metric"><span>Runtime</span><strong>21 min</strong></div></div>
+                <p class="aw-copy">Checkout logic refactored. No blockers detected.</p><div class="aw-actions"><button class="aw-button primary aw-jump" data-aw-target="3">Ask Codex</button><button class="aw-button aw-jump" data-aw-target="2">View summary</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>What appears</span><p>Task name, verified status, test evidence, runtime, one-line summary, and the next actions.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="2">
+              <div class="aw-step-head"><span class="aw-number">2</span><span><strong>Review summary</strong><small>Glance at evidence and risk</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen">
+                <div class="aw-time"><span>9:41</span><span>●</span></div><span class="aw-app">Verified complete</span><h3>What changed</h3>
+                <div class="aw-result"><strong>Result summary</strong>8 files changed<br>14 tests added<br>68/68 tests passed<br>No blockers</div>
+                <div class="aw-actions"><button class="aw-button primary aw-jump" data-aw-target="3">Ask a question</button><button class="aw-button aw-handoff">Open on iPhone</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Decision point</span><p>The developer can accept the result, inspect more detail on iPhone, or ask Codex a follow-up.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="3">
+              <div class="aw-step-head"><span class="aw-number">3</span><span><strong>Ask by voice</strong><small>Tap the mic and dictate</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen aw-voice-screen">
+                <div class="aw-time"><span>9:42</span><span>●</span></div><span class="aw-app">Ask Codex</span><div class="aw-orb"><span class="aw-mic">🎙</span></div>
+                <div class="aw-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="aw-spoken">Tap to say “What changed?”</div><div class="aw-listening">Voice reply · English</div>
+                <div class="aw-actions"><button class="aw-button primary aw-mic-button">Start listening</button><button class="aw-button aw-jump" data-aw-target="4">Use sample question</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Voice path</span><p>The paired iPhone transcribes speech, and DoneSure adds the current task ID before sending it to Codex.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="4">
+              <div class="aw-step-head"><span class="aw-number">4</span><span><strong>Codex replies</strong><small>Short answer + haptic tap</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen">
+                <div class="aw-time"><span>9:42</span><span>●</span></div><span class="aw-app">Codex replied</span><h3>What changed</h3>
+                <div class="aw-result"><strong>Codex</strong>Moved checkout validation into PaymentService and added 14 unit tests. All 68 tests pass.</div>
+                <div class="aw-actions"><button class="aw-button primary aw-jump" data-aw-target="5">Reply by voice</button><button class="aw-button aw-done">Done</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Response design</span><p>The watch shows a concise answer. Full diffs and long output remain available on the phone or Mac.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="5">
+              <div class="aw-step-head"><span class="aw-number">5</span><span><strong>Give next command</strong><small>Continue the task by voice</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen is-listening">
+                <div class="aw-time"><span>9:43</span><span>●</span></div><span class="aw-app">Ask Codex</span><div class="aw-orb"><span class="aw-mic">🎙</span></div>
+                <div class="aw-spoken">“Create a pull request and send me the link.”</div><div class="aw-listening">Ready to send to the existing thread</div>
+                <div class="aw-actions"><button class="aw-button primary aw-jump" data-aw-target="6">Send command</button><button class="aw-button aw-done">Cancel</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Continuity</span><p>The new instruction enters the same Codex thread, preserving its files, decisions, and task context.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="6">
+              <div class="aw-step-head"><span class="aw-number">6</span><span><strong>Action confirmed</strong><small>PR ready + optional handoff</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen">
+                <div class="aw-time"><span>9:45</span><span>●</span></div><span class="aw-app">✓ Action complete</span><h3>Pull request created</h3><div class="aw-task">PR #284</div>
+                <div class="aw-result"><strong>Codex</strong>Created from codex/payment-refactor and ready for review.</div>
+                <div class="aw-actions"><button class="aw-button primary aw-handoff">Open on iPhone</button><button class="aw-button aw-jump" data-aw-target="1">Start over</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Close the loop</span><p>The watch confirms the result. Review can continue on iPhone without losing conversation context.</p></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="aw-system-flow" aria-label="Voice message routing">
+          <span class="aw-node">Apple Watch captures voice</span><span class="aw-arrow">→</span>
+          <span class="aw-node">iPhone transcribes</span><span class="aw-arrow">→</span>
+          <span class="aw-node">DoneSure adds task context</span><span class="aw-arrow">→</span>
+          <span class="aw-node">Codex runs on Mac</span><span class="aw-arrow">→</span>
+          <span class="aw-node">Watch receives concise reply</span>
         </div>
       </section>
     </main>
@@ -545,6 +700,46 @@
       sw.classList.toggle('on');
       sw.setAttribute('aria-pressed', sw.classList.contains('on') ? 'true' : 'false');
       showToast('Notification settings updated', sw.classList.contains('on') ? 'This channel is now on.' : 'This channel is paused.');
+    }));
+
+    function scrollToWatchStep(stepNumber) {
+      const target = document.querySelector(`[data-aw-step="${stepNumber}"]`);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    document.querySelectorAll('.aw-jump').forEach(button => button.addEventListener('click', () => {
+      const target = Number(button.dataset.awTarget);
+      scrollToWatchStep(target);
+      const messages = {
+        1: ['Flow restarted', 'The completion notification is back on screen.'],
+        2: ['Task summary opened', 'Review changes, test evidence, and blockers at a glance.'],
+        3: ['Voice reply ready', 'Tap “Start listening” and speak naturally.'],
+        4: ['Codex replied', 'A concise response arrived with a haptic tap.'],
+        5: ['Follow-up ready', 'Continue the same Codex task with another voice command.'],
+        6: ['Command sent', 'Codex created PR #284 and returned the result to your watch.']
+      };
+      showToast(messages[target][0], messages[target][1]);
+    }));
+
+    document.querySelectorAll('.aw-mic-button').forEach(button => button.addEventListener('click', () => {
+      const screen = button.closest('.aw-screen');
+      const isListening = screen.classList.toggle('is-listening');
+      screen.querySelector('.aw-spoken').textContent = isListening ? '“What changed?”' : 'Tap to say “What changed?”';
+      screen.querySelector('.aw-listening').textContent = isListening ? 'Transcribing on iPhone…' : 'Voice reply · English';
+      button.textContent = isListening ? 'Send to Codex' : 'Start listening';
+      if (isListening) {
+        showToast('Listening on Apple Watch', 'Say “What changed?” naturally.');
+      } else {
+        scrollToWatchStep(4);
+        showToast('Voice message sent', 'Codex received the transcript in the existing task.');
+      }
+    }));
+
+    document.querySelectorAll('.aw-handoff').forEach(button => button.addEventListener('click', () => {
+      showToast('Handing off to iPhone', 'The full Codex task opens with the same conversation context.');
+    }));
+    document.querySelectorAll('.aw-done').forEach(button => button.addEventListener('click', () => {
+      showToast('Watch action closed', 'The task and conversation remain available in DoneSure history.');
     }));
 
     render();
