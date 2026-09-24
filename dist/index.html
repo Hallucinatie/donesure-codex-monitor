@@ -120,6 +120,7 @@
     .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
     .btn.primary:hover { background: #e4ff75; }
     .btn.warn { border-color: rgba(255,180,84,.46); color: #ffd29a; background: rgba(255,180,84,.08); }
+    .btn-link { text-decoration: none; display: inline-flex; align-items: center; }
     .btn:focus-visible, .task:focus-visible, .switch:focus-visible { outline: 3px solid rgba(106,168,255,.6); outline-offset: 2px; }
 
     .workspace { padding: 24px; display: grid; grid-template-columns: minmax(260px, .82fr) minmax(460px, 1.55fr) minmax(260px, .8fr); gap: 18px; }
@@ -243,7 +244,9 @@
     }
 
     @media (max-width: 520px) {
-      .top-actions .btn:not(.primary) { display: none; }
+      #resetDemo { display: none; }
+      .watch-flow-link { font-size: 0; width: 42px; justify-content: center; }
+      .watch-flow-link::after { content: "⌚"; font-size: 1rem; }
       .metric-row { grid-template-columns: 1fr 1fr; }
       .metric:last-child { grid-column: 1 / -1; }
       .device-stage { grid-template-columns: 1fr; }
@@ -289,6 +292,7 @@
         </div>
         <div class="top-actions">
           <div class="connection"><span class="dot"></span>Mac Studio · Online</div>
+          <a class="btn btn-link watch-flow-link" href="watch.html">Apple Watch flow</a>
           <button class="btn" id="resetDemo">Reset demo</button>
           <button class="btn primary" id="nextEvent">Simulate next event</button>
         </div>
