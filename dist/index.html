@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="DoneSure：为 Codex 长程任务提供可靠、可确认的手机与 Apple Watch 状态提醒。">
+  <meta name="description" content="DoneSure delivers reliable, actionable Codex task alerts to your phone and Apple Watch.">
   <title>DoneSure · Codex Task Monitor</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b0d10'/%3E%3Cpath d='M17 34l9 9 21-23' fill='none' stroke='%23d8ff43' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <style>
@@ -258,7 +258,7 @@
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar" aria-label="主导航">
+    <aside class="sidebar" aria-label="Main navigation">
       <div class="brand">
         <div class="brand-mark">✓</div>
         <div><strong>DoneSure</strong><small>Codex Task Monitor</small></div>
@@ -267,17 +267,17 @@
       <div>
         <div class="nav-label">Workspace</div>
         <nav class="nav">
-          <button class="active"><span>任务监控</span><span class="count">3</span></button>
-          <button><span>通知记录</span><span class="count">8</span></button>
-          <button><span>设备与渠道</span></button>
-          <button><span>规则设置</span></button>
+          <button class="active"><span>Task Monitor</span><span class="count">3</span></button>
+          <button><span>Alert History</span><span class="count">8</span></button>
+          <button><span>Devices & Channels</span></button>
+          <button><span>Rules</span></button>
         </nav>
       </div>
 
       <div class="watch-card">
-        <div class="row"><span class="dot"></span><strong>Apple Watch 已连接</strong></div>
-        <p>上次同步：刚刚 · iPhone 镜像通知已开启</p>
-        <button class="text-btn" id="sidebarTest">发送测试通知</button>
+        <div class="row"><span class="dot"></span><strong>Apple Watch connected</strong></div>
+        <p>Synced just now · iPhone notification mirroring is on</p>
+        <button class="text-btn" id="sidebarTest">Send test alert</button>
       </div>
     </aside>
 
@@ -285,86 +285,85 @@
       <header class="topbar">
         <div>
           <div class="eyebrow">Live workspace · demo</div>
-          <h1>不必盯着 Codex，重要状态会来找你。</h1>
+          <h1>Stop watching Codex. Important updates find you.</h1>
         </div>
         <div class="top-actions">
-          <div class="connection"><span class="dot"></span>Mac Studio · 在线</div>
-          <button class="btn" id="resetDemo">重置演示</button>
-          <button class="btn primary" id="nextEvent">模拟下一事件</button>
+          <div class="connection"><span class="dot"></span>Mac Studio · Online</div>
+          <button class="btn" id="resetDemo">Reset demo</button>
+          <button class="btn primary" id="nextEvent">Simulate next event</button>
         </div>
       </header>
 
-      <section class="workspace" aria-label="DoneSure 任务监控原型">
-        <section class="panel" aria-label="任务列表">
-          <div class="panel-head"><h2>Codex 任务</h2><small id="taskCount">3 个任务</small></div>
+      <section class="workspace" aria-label="DoneSure task monitoring prototype">
+        <section class="panel" aria-label="Task list">
+          <div class="panel-head"><h2>Codex Tasks</h2><small id="taskCount">3 tasks</small></div>
           <div class="task-list" id="taskList"></div>
         </section>
 
         <section class="panel detail" aria-live="polite">
           <div class="detail-title">
-            <span class="badge running" id="detailBadge">运行中</span>
-            <h2 id="detailName">重构支付模块</h2>
-            <p id="detailPrompt">拆分结算逻辑，补充单元测试，并确保所有测试通过。</p>
+            <span class="badge running" id="detailBadge">Running</span>
+            <h2 id="detailName">Refactor payment module</h2>
+            <p id="detailPrompt">Split checkout logic, add unit tests, and make sure every test passes.</p>
           </div>
           <div class="metric-row">
-            <div class="metric"><span>运行时长</span><strong id="duration">18m 42s</strong></div>
-            <div class="metric"><span>验证规则</span><strong id="rule">测试通过</strong></div>
-            <div class="metric"><span>通知策略</span><strong id="policy">需要操作时</strong></div>
+            <div class="metric"><span>Runtime</span><strong id="duration">18m 42s</strong></div>
+            <div class="metric"><span>Completion rule</span><strong id="rule">Tests pass</strong></div>
+            <div class="metric"><span>Alert policy</span><strong id="policy">When action is needed</strong></div>
           </div>
 
           <div class="timeline-wrap">
-            <div class="timeline-head"><strong>实时状态</strong><span id="lastUpdate">刚刚更新</span></div>
+            <div class="timeline-head"><strong>Live status</strong><span id="lastUpdate">Updated just now</span></div>
             <div class="timeline" id="timeline"></div>
           </div>
 
           <div class="action-bar">
             <div class="action-copy">
               <div class="action-icon" id="actionIcon">↗</div>
-              <div><strong id="actionTitle">任务仍在执行</strong><p id="actionDescription">完成、失败或需要输入时，DoneSure 会立即提醒你。</p></div>
+              <div><strong id="actionTitle">Task still running</strong><p id="actionDescription">DoneSure alerts you when it finishes, fails, or needs input.</p></div>
             </div>
             <div class="action-buttons">
-              <button class="btn primary" id="mainAction">模拟需要输入</button>
-              <button class="btn" id="openCodex">在 Codex 中打开</button>
-              <button class="btn warn" id="retryAlert">重发提醒</button>
+              <button class="btn primary" id="mainAction">Simulate input request</button>
+              <button class="btn" id="openCodex">Open in Codex</button>
+              <button class="btn warn" id="retryAlert">Resend alert</button>
             </div>
           </div>
         </section>
 
-        <section class="panel devices" aria-label="通知预览">
-          <div class="panel-head"><h2>通知预览</h2><small>iPhone + Watch</small></div>
+        <section class="panel devices" aria-label="Notification preview">
+          <div class="panel-head"><h2>Notification Preview</h2><small>iPhone + Watch</small></div>
           <div class="device-stage">
-            <div class="phone" aria-label="iPhone 通知预览">
+            <div class="phone" aria-label="iPhone notification preview">
               <div class="island"></div>
               <div class="phone-time">09:41</div>
               <div class="notification">
-                <div class="notif-head"><span>DONESURE</span><span>现在</span></div>
-                <div class="notif-title" id="phoneTitle">Codex 正在工作</div>
-                <div class="notif-body" id="phoneBody">重构支付模块 · 已完成 2/4 个阶段。</div>
+                <div class="notif-head"><span>DONESURE</span><span>NOW</span></div>
+                <div class="notif-title" id="phoneTitle">Codex is working</div>
+                <div class="notif-body" id="phoneBody">Refactor payment module · 2 of 4 stages complete.</div>
                 <div class="notif-actions">
-                  <button id="phoneAcknowledge">确认收到</button>
-                  <button id="phoneOpen">查看任务</button>
+                  <button id="phoneAcknowledge">Acknowledge</button>
+                  <button id="phoneOpen">View task</button>
                 </div>
               </div>
             </div>
 
-            <div class="watch" aria-label="Apple Watch 通知预览">
+            <div class="watch" aria-label="Apple Watch notification preview">
               <div class="tiny" id="watchStatus">Running</div>
-              <strong id="watchTitle">重构支付模块</strong>
-              <p id="watchBody">Codex 正在执行测试。</p>
-              <button id="watchAcknowledge">确认收到</button>
+              <strong id="watchTitle">Refactor payment module</strong>
+              <p id="watchBody">Codex is running tests.</p>
+              <button id="watchAcknowledge">Acknowledge</button>
             </div>
           </div>
 
           <div class="settings">
-            <div class="setting-row"><label>iPhone 推送<small>任务完成、失败或等待输入</small></label><button class="switch on" aria-label="切换 iPhone 推送" aria-pressed="true"></button></div>
-            <div class="setting-row"><label>Apple Watch<small>镜像高优先级提醒</small></label><button class="switch on" aria-label="切换 Apple Watch 通知" aria-pressed="true"></button></div>
-            <div class="setting-row"><label>未确认则升级<small>5 分钟后再次提醒</small></label><button class="switch on" aria-label="切换重复提醒" aria-pressed="true"></button></div>
+            <div class="setting-row"><label>iPhone push<small>Completed, failed, or waiting for input</small></label><button class="switch on" aria-label="Toggle iPhone push" aria-pressed="true"></button></div>
+            <div class="setting-row"><label>Apple Watch<small>Mirror high-priority alerts</small></label><button class="switch on" aria-label="Toggle Apple Watch alerts" aria-pressed="true"></button></div>
+            <div class="setting-row"><label>Escalate if unacknowledged<small>Send another alert after 5 minutes</small></label><button class="switch on" aria-label="Toggle repeated alerts" aria-pressed="true"></button></div>
           </div>
         </section>
 
         <div class="prototype-note">
-          <span><strong>原型提示：</strong>选择不同任务，或点击“模拟下一事件”体验运行中 → 等待输入 → 验证中 → 真正完成的状态变化。</span>
-          <span>结构参考：<a href="https://www.producthunt.com/products/relayd" target="_blank" rel="noreferrer">relayd</a> · <a href="https://www.producthunt.com/products/pushary" target="_blank" rel="noreferrer">Pushary</a></span>
+          <span><strong>Prototype tip:</strong> Select a task or click “Simulate next event” to experience Running → Needs input → Verifying → Verified complete.</span>
         </div>
       </section>
     </main>
@@ -375,42 +374,42 @@
   <script>
     const tasks = [
       {
-        id: 'payment', name: '重构支付模块', prompt: '拆分结算逻辑，补充单元测试，并确保所有测试通过。',
-        status: 'running', label: '运行中', duration: '18m 42s', rule: '测试通过', policy: '需要操作时', phase: 0,
+        id: 'payment', name: 'Refactor payment module', prompt: 'Split checkout logic, add unit tests, and make sure every test passes.',
+        status: 'running', label: 'Running', duration: '18m 42s', rule: 'Tests pass', policy: 'When action is needed', phase: 0,
         events: [
-          ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
-          ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
-          ['current', '执行测试套件', '42/68 项测试通过', '现在'],
-          ['', '验证完成条件', '等待测试结束', '—']
+          ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+          ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+          ['current', 'Run test suite', '42 of 68 tests passing', 'Now'],
+          ['', 'Verify completion criteria', 'Waiting for tests to finish', '—']
         ]
       },
       {
-        id: 'release', name: '发布 v2.4.0', prompt: '更新版本号、生成 changelog，并创建发布分支。',
-        status: 'attention', label: '需要输入', duration: '07m 16s', rule: '人工确认', policy: '立即提醒', phase: 1,
+        id: 'release', name: 'Release v2.4.0', prompt: 'Update the version, generate the changelog, and create a release branch.',
+        status: 'attention', label: 'Needs input', duration: '07m 16s', rule: 'Human approval', policy: 'Alert immediately', phase: 1,
         events: [
-          ['done', '检查发布内容', '发现 12 个待发布提交', '09:26'],
-          ['current', '请求发布权限', '需要确认推送 release/v2.4.0', '现在'],
-          ['', '创建发布分支', '等待用户批准', '—'],
-          ['', '生成发布摘要', '尚未开始', '—']
+          ['done', 'Review release contents', 'Found 12 commits to publish', '09:26'],
+          ['current', 'Request release permission', 'Approval required to push release/v2.4.0', 'Now'],
+          ['', 'Create release branch', 'Waiting for approval', '—'],
+          ['', 'Generate release summary', 'Not started', '—']
         ]
       },
       {
-        id: 'bug', name: '修复登录回归', prompt: '复现移动端登录失败，修复后运行回归测试。',
-        status: 'complete', label: '已验证完成', duration: '31m 08s', rule: '回归测试', policy: '完成时提醒', phase: 3,
+        id: 'bug', name: 'Fix login regression', prompt: 'Reproduce the mobile login failure, fix it, and run regression tests.',
+        status: 'complete', label: 'Verified complete', duration: '31m 08s', rule: 'Regression tests', policy: 'Alert on completion', phase: 3,
         events: [
-          ['done', '复现登录错误', '定位为 token 刷新竞态', '08:51'],
-          ['done', '应用修复', '更新刷新锁与重试逻辑', '09:04'],
-          ['done', '运行回归测试', '126 项全部通过', '09:18'],
-          ['done', '验证完成条件', '任务结果已确认', '09:19']
+          ['done', 'Reproduce login failure', 'Identified a token refresh race', '08:51'],
+          ['done', 'Apply fix', 'Updated refresh lock and retry logic', '09:04'],
+          ['done', 'Run regression tests', 'All 126 tests passed', '09:18'],
+          ['done', 'Verify completion criteria', 'Task outcome confirmed', '09:19']
         ]
       }
     ];
 
     const stages = [
-      { status: 'running', label: '运行中', badge: 'running', action: '模拟需要输入', icon: '↗', title: '任务仍在执行', desc: '完成、失败或需要输入时，DoneSure 会立即提醒你。', phoneTitle: 'Codex 正在工作', phoneBody: '重构支付模块 · 正在执行测试。', watchStatus: 'RUNNING', watchBody: 'Codex 正在执行测试。' },
-      { status: 'attention', label: '需要输入', badge: 'attention', action: '批准并继续', icon: '!', title: 'Codex 正在等待你的决定', desc: '批准测试环境的网络访问后，任务会继续。', phoneTitle: 'Codex 需要你的输入', phoneBody: '重构支付模块 · 请求访问测试数据库。', watchStatus: 'NEEDS INPUT', watchBody: '请求访问测试数据库。' },
-      { status: 'running', label: '验证中', badge: 'running', action: '完成验证', icon: '…', title: '正在确认任务是否真正完成', desc: 'DoneSure 正在检查测试结果，而不是把“停止”误判为“完成”。', phoneTitle: '正在验证完成条件', phoneBody: '重构支付模块 · 68 项测试已全部通过。', watchStatus: 'VERIFYING', watchBody: '正在核验测试结果。' },
-      { status: 'complete', label: '已验证完成', badge: 'complete', action: '再次运行演示', icon: '✓', title: '任务已真正完成', desc: '全部测试通过，结果已发送到 iPhone 和 Apple Watch。', phoneTitle: '任务已验证完成', phoneBody: '重构支付模块 · 68 项测试通过，用时 21 分钟。', watchStatus: 'COMPLETED', watchBody: '68 项测试全部通过。' }
+      { status: 'running', label: 'Running', badge: 'running', action: 'Simulate input request', icon: '↗', title: 'Task still running', desc: 'DoneSure alerts you when it finishes, fails, or needs input.', phoneTitle: 'Codex is working', phoneBody: 'Refactor payment module · Running tests.', watchStatus: 'RUNNING', watchBody: 'Codex is running tests.' },
+      { status: 'attention', label: 'Needs input', badge: 'attention', action: 'Approve and continue', icon: '!', title: 'Codex is waiting for your decision', desc: 'Approve network access to the test environment to continue.', phoneTitle: 'Codex needs your input', phoneBody: 'Refactor payment module · Requests access to the test database.', watchStatus: 'NEEDS INPUT', watchBody: 'Test database access requested.' },
+      { status: 'running', label: 'Verifying', badge: 'running', action: 'Complete verification', icon: '…', title: 'Checking whether the task is truly complete', desc: 'DoneSure checks the test results instead of treating “stopped” as “done.”', phoneTitle: 'Verifying completion criteria', phoneBody: 'Refactor payment module · All 68 tests passed.', watchStatus: 'VERIFYING', watchBody: 'Checking test results.' },
+      { status: 'complete', label: 'Verified complete', badge: 'complete', action: 'Run demo again', icon: '✓', title: 'Task is truly complete', desc: 'All tests passed. The result was sent to your iPhone and Apple Watch.', phoneTitle: 'Task verified complete', phoneBody: 'Refactor payment module · 68 tests passed in 21 minutes.', watchStatus: 'COMPLETED', watchBody: 'All 68 tests passed.' }
     ];
 
     let selectedId = 'payment';
@@ -421,8 +420,8 @@
     function activeTask() { return tasks.find(t => t.id === selectedId); }
     function stageFor(task) {
       if (task.id === 'payment') return stages[task.phase];
-      if (task.status === 'attention') return { ...stages[1], phoneBody: task.name + ' · 需要确认发布权限。', watchBody: '需要确认发布权限。' };
-      return { ...stages[3], phoneBody: task.name + ' · 回归测试全部通过。', watchBody: '回归测试全部通过。' };
+      if (task.status === 'attention') return { ...stages[1], phoneBody: task.name + ' · Release permission required.', watchBody: 'Release permission required.' };
+      return { ...stages[3], phoneBody: task.name + ' · All regression tests passed.', watchBody: 'All regression tests passed.' };
     }
 
     function renderTasks() {
@@ -479,33 +478,33 @@
       if (nextPhase === 1) {
         task.duration = '19m 04s';
         task.events = [
-          ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
-          ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
-          ['done', '执行测试套件', '需要连接测试数据库', '09:40'],
-          ['current', '等待权限确认', '请求访问测试数据库', '现在']
+          ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+          ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+          ['done', 'Run test suite', 'Test database connection required', '09:40'],
+          ['current', 'Wait for permission', 'Test database access requested', 'Now']
         ];
-        showToast('需要你的输入', '“重构支付模块”正在等待数据库访问权限。');
+        showToast('Your input is needed', '“Refactor payment module” is waiting for database access.');
       } else if (nextPhase === 2) {
         task.duration = '19m 38s';
         task.events = [
-          ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
-          ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
-          ['done', '执行测试套件', '68 项测试全部通过', '09:41'],
-          ['current', '验证完成条件', '核对测试与任务要求', '现在']
+          ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+          ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+          ['done', 'Run test suite', 'All 68 tests passed', '09:41'],
+          ['current', 'Verify completion criteria', 'Checking tests against the task', 'Now']
         ];
-        showToast('任务已继续', '权限已确认，DoneSure 正在核验完成条件。');
+        showToast('Task resumed', 'Permission approved. DoneSure is checking the completion criteria.');
       } else if (nextPhase === 3) {
         task.duration = '21m 03s';
         task.events = [
-          ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
-          ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
-          ['done', '执行测试套件', '68 项测试全部通过', '09:41'],
-          ['done', '验证完成条件', '任务结果已确认', '09:43']
+          ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+          ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+          ['done', 'Run test suite', 'All 68 tests passed', '09:41'],
+          ['done', 'Verify completion criteria', 'Task outcome confirmed', '09:43']
         ];
-        showToast('任务已验证完成', '68 项测试通过，完成提醒已发送到手机和手表。');
+        showToast('Task verified complete', '68 tests passed. Completion alerts were sent to your phone and watch.');
       } else {
         resetDemo(false);
-        showToast('演示已重新开始', 'Codex 正在执行“重构支付模块”。');
+        showToast('Demo restarted', 'Codex is running “Refactor payment module.”');
       }
       render();
     }
@@ -519,29 +518,29 @@
     function resetDemo(withToast = true) {
       selectedId = 'payment';
       const task = tasks[0];
-      task.phase = 0; task.status = 'running'; task.label = '运行中'; task.duration = '18m 42s';
+      task.phase = 0; task.status = 'running'; task.label = 'Running'; task.duration = '18m 42s';
       task.events = [
-        ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
-        ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
-        ['current', '执行测试套件', '42/68 项测试通过', '现在'],
-        ['', '验证完成条件', '等待测试结束', '—']
+        ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+        ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+        ['current', 'Run test suite', '42 of 68 tests passing', 'Now'],
+        ['', 'Verify completion criteria', 'Waiting for tests to finish', '—']
       ];
       render();
-      if (withToast) showToast('演示已重置', '你可以重新体验完整通知流程。');
+      if (withToast) showToast('Demo reset', 'You can experience the full notification flow again.');
     }
 
     $('nextEvent').addEventListener('click', nextEvent);
     $('mainAction').addEventListener('click', nextEvent);
     $('resetDemo').addEventListener('click', () => resetDemo(true));
-    $('sidebarTest').addEventListener('click', () => showToast('测试通知已发送', '请查看右侧 iPhone 与 Apple Watch 预览。'));
-    $('retryAlert').addEventListener('click', () => showToast('提醒已重发', '高优先级通知已再次发送到两台设备。'));
-    $('openCodex').addEventListener('click', () => showToast('正在打开 Codex', '原型演示：真实产品会跳转到对应任务。'));
-    $('phoneOpen').addEventListener('click', () => showToast('任务详情', activeTask().name + ' 已在 DoneSure 中打开。'));
-    ['phoneAcknowledge', 'watchAcknowledge'].forEach(id => $(id).addEventListener('click', () => showToast('已确认收到', '升级提醒已停止，确认时间已写入通知记录。')));
+    $('sidebarTest').addEventListener('click', () => showToast('Test alert sent', 'Check the iPhone and Apple Watch previews on the right.'));
+    $('retryAlert').addEventListener('click', () => showToast('Alert resent', 'The high-priority alert was sent to both devices again.'));
+    $('openCodex').addEventListener('click', () => showToast('Opening Codex', 'Prototype behavior: the real product would open the matching task.'));
+    $('phoneOpen').addEventListener('click', () => showToast('Task details', activeTask().name + ' opened in DoneSure.'));
+    ['phoneAcknowledge', 'watchAcknowledge'].forEach(id => $(id).addEventListener('click', () => showToast('Alert acknowledged', 'Escalation stopped and the confirmation time was added to alert history.')));
     document.querySelectorAll('.switch').forEach(sw => sw.addEventListener('click', () => {
       sw.classList.toggle('on');
       sw.setAttribute('aria-pressed', sw.classList.contains('on') ? 'true' : 'false');
-      showToast('通知设置已更新', sw.classList.contains('on') ? '该渠道已开启。' : '该渠道已暂停。');
+      showToast('Notification settings updated', sw.classList.contains('on') ? 'This channel is now on.' : 'This channel is paused.');
     }));
 
     render();
