@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DoneSure delivers reliable, actionable Codex task alerts to your phone and Apple Watch.">
+  <title>DoneSure · Codex Task Monitor</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b0d10'/%3E%3Cpath d='M17 34l9 9 21-23' fill='none' stroke='%23d8ff43' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080a0d;
+      --panel: #111419;
+      --panel-2: #171b21;
+      --line: #2b3139;
+      --muted: #8f9aa7;
+      --text: #f6f7f8;
+      --accent: #d8ff43;
+      --accent-ink: #111500;
+      --blue: #6aa8ff;
+      --orange: #ffb454;
+      --red: #ff6b6b;
+      --green: #58db87;
+      --radius: 20px;
+      --shadow: 0 24px 70px rgba(0, 0, 0, .36);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 85% 10%, rgba(216,255,67,.08), transparent 26rem),
+        linear-gradient(180deg, #0a0c10 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+
+    .app-shell {
+      width: min(1480px, calc(100% - 32px));
+      margin: 16px auto;
+      min-height: calc(100vh - 32px);
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+      background: rgba(10, 12, 16, .88);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+    }
+
+    .sidebar {
+      padding: 24px 18px;
+      background: #0c0f13;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 7px; }
+    .brand-mark {
+      width: 36px; height: 36px; border-radius: 11px;
+      display: grid; place-items: center;
+      background: var(--accent); color: var(--accent-ink);
+      font-weight: 900; font-size: 21px;
+      box-shadow: 0 0 26px rgba(216,255,67,.22);
+    }
+    .brand strong { display: block; font-size: 1.05rem; letter-spacing: -.02em; }
+    .brand small { color: var(--muted); display: block; font-size: .75rem; }
+
+    .nav-label { color: #67717d; font-size: .72rem; text-transform: uppercase; letter-spacing: .16em; padding: 0 10px; margin-bottom: 7px; }
+    .nav { display: grid; gap: 4px; }
+    .nav button {
+      width: 100%; border: 0; background: transparent; text-align: left;
+      padding: 11px 12px; border-radius: 11px; cursor: pointer;
+      color: #aab2bc; display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav button:hover, .nav button.active { background: #181d23; color: #fff; }
+    .nav button.active::before { content: ""; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; margin-right: 9px; }
+    .nav button span:first-of-type { flex: 1; }
+    .nav .count { font-size: .74rem; color: #7d8792; border: 1px solid #333a43; border-radius: 999px; padding: 1px 7px; }
+
+    .watch-card {
+      margin-top: auto; background: linear-gradient(145deg, #181d22, #111418);
+      border: 1px solid var(--line); border-radius: 16px; padding: 14px;
+    }
+    .watch-card .row { display: flex; gap: 9px; align-items: center; }
+    .watch-card p { color: var(--muted); font-size: .78rem; margin: 9px 0 12px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 5px rgba(88,219,135,.1); }
+    .text-btn { width: 100%; border: 1px solid #39414a; background: #0f1216; border-radius: 10px; padding: 8px 10px; cursor: pointer; font-size: .82rem; }
+    .text-btn:hover { border-color: var(--accent); }
+
+    main { min-width: 0; }
+    .topbar {
+      height: 78px; padding: 0 28px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--line); background: rgba(12,15,19,.82); position: sticky; top: 0; z-index: 20;
+      backdrop-filter: blur(16px);
+    }
+    .eyebrow { color: var(--muted); font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { font-size: 1.22rem; margin: 2px 0 0; letter-spacing: -.02em; }
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+    .connection { display: flex; align-items: center; gap: 8px; color: #b7c0ca; font-size: .82rem; padding-right: 6px; }
+
+    .btn {
+      border: 1px solid #3a424b; background: #15191e; border-radius: 12px;
+      padding: 10px 14px; cursor: pointer; font-weight: 700; font-size: .86rem;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: #68737e; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .btn.primary:hover { background: #e4ff75; }
+    .btn.warn { border-color: rgba(255,180,84,.46); color: #ffd29a; background: rgba(255,180,84,.08); }
+    .btn-link { text-decoration: none; display: inline-flex; align-items: center; }
+    .btn:focus-visible, .task:focus-visible, .switch:focus-visible { outline: 3px solid rgba(106,168,255,.6); outline-offset: 2px; }
+
+    .workspace { padding: 24px; display: grid; grid-template-columns: minmax(260px, .82fr) minmax(460px, 1.55fr) minmax(260px, .8fr); gap: 18px; }
+    .panel { border: 1px solid var(--line); background: rgba(17,20,25,.92); border-radius: var(--radius); min-width: 0; overflow: hidden; }
+    .panel-head { padding: 18px 18px 13px; display: flex; align-items: center; justify-content: space-between; }
+    .panel-head h2 { font-size: .9rem; margin: 0; letter-spacing: .01em; }
+    .panel-head small { color: var(--muted); }
+
+    .task-list { display: grid; padding: 0 10px 12px; gap: 7px; }
+    .task {
+      border: 1px solid transparent; background: transparent; border-radius: 14px;
+      padding: 13px; cursor: pointer; text-align: left; width: 100%;
+    }
+    .task:hover { background: #161a20; }
+    .task.active { background: #1b2026; border-color: #39414a; }
+    .task-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .task-title { font-weight: 760; line-height: 1.32; }
+    .task-meta { color: var(--muted); font-size: .75rem; margin-top: 7px; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 8px; font-size: .7rem; font-weight: 780; white-space: nowrap; }
+    .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .running { color: #bcd6ff; background: rgba(106,168,255,.12); }
+    .attention { color: #ffd29a; background: rgba(255,180,84,.12); }
+    .complete { color: #8ef0ae; background: rgba(88,219,135,.12); }
+    .failed { color: #ff9c9c; background: rgba(255,107,107,.12); }
+
+    .detail { padding-bottom: 18px; }
+    .detail-title { padding: 2px 22px 17px; border-bottom: 1px solid var(--line); }
+    .detail-title h2 { margin: 5px 0 4px; font-size: clamp(1.3rem, 2vw, 1.8rem); letter-spacing: -.035em; }
+    .detail-title p { margin: 0; color: var(--muted); font-size: .86rem; }
+    .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border-bottom: 1px solid var(--line); }
+    .metric { background: var(--panel); padding: 15px 18px; }
+    .metric span { display: block; color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .09em; }
+    .metric strong { display: block; font-size: 1rem; margin-top: 3px; }
+
+    .timeline-wrap { padding: 19px 21px 5px; }
+    .timeline-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .timeline-head strong { font-size: .86rem; }
+    .timeline-head span { color: var(--muted); font-size: .75rem; }
+    .timeline { display: grid; gap: 0; }
+    .event { display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; min-height: 61px; position: relative; }
+    .event::before { content: ""; position: absolute; left: 7px; top: 17px; bottom: -5px; width: 1px; background: #313841; }
+    .event:last-child::before { display: none; }
+    .event-dot { width: 15px; height: 15px; border-radius: 50%; margin-top: 2px; background: #2f363f; border: 4px solid #171b21; box-shadow: 0 0 0 1px #424b55; z-index: 1; }
+    .event.done .event-dot { background: var(--green); box-shadow: 0 0 0 1px var(--green); }
+    .event.current .event-dot { background: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 18px rgba(216,255,67,.35); }
+    .event strong { display: block; font-size: .82rem; line-height: 1.35; }
+    .event p { margin: 3px 0 0; color: var(--muted); font-size: .75rem; }
+    .event time { color: #6f7985; font-size: .7rem; }
+
+    .action-bar { margin: 9px 20px 0; padding: 15px; border: 1px solid #343c45; border-radius: 15px; background: #0d1014; }
+    .action-copy { display: flex; gap: 11px; margin-bottom: 13px; }
+    .action-icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: rgba(216,255,67,.12); color: var(--accent); font-weight: 900; }
+    .action-copy strong { display: block; font-size: .86rem; }
+    .action-copy p { margin: 2px 0 0; color: var(--muted); font-size: .76rem; }
+    .action-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .devices { padding-bottom: 16px; }
+    .device-stage { padding: 4px 14px 15px; display: grid; place-items: center; gap: 18px; }
+    .phone {
+      width: min(210px, 90%); aspect-ratio: 9 / 17.5; border: 7px solid #2d333b; border-radius: 34px; background: #080a0d;
+      box-shadow: inset 0 0 0 1px #070809, 0 22px 40px rgba(0,0,0,.38); padding: 14px 10px; position: relative;
+    }
+    .island { width: 66px; height: 18px; background: #000; border-radius: 999px; margin: -7px auto 17px; }
+    .phone-time { font-size: .68rem; font-weight: 800; padding: 0 4px 8px; }
+    .notification { background: rgba(42,47,54,.96); border: 1px solid #505964; border-radius: 17px; padding: 10px; box-shadow: 0 12px 30px rgba(0,0,0,.25); }
+    .notif-head { display: flex; justify-content: space-between; gap: 8px; color: #b7c0ca; font-size: .59rem; text-transform: uppercase; letter-spacing: .06em; }
+    .notif-title { font-weight: 800; font-size: .77rem; margin-top: 7px; }
+    .notif-body { color: #d6dbe0; font-size: .66rem; margin: 4px 0 9px; line-height: 1.4; }
+    .notif-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .notif-actions button { border: 0; border-radius: 8px; padding: 6px 4px; background: #343b44; font-size: .59rem; cursor: pointer; }
+    .notif-actions button:first-child { background: var(--accent); color: var(--accent-ink); font-weight: 800; }
+    .watch {
+      width: 126px; height: 142px; border: 8px solid #343a42; background: #050607; border-radius: 36px;
+      padding: 17px 12px; position: relative; box-shadow: 0 18px 36px rgba(0,0,0,.36);
+    }
+    .watch::after { content: ""; position: absolute; right: -13px; top: 39px; width: 5px; height: 24px; border-radius: 0 5px 5px 0; background: #555e68; }
+    .watch .tiny { color: var(--accent); font-size: .56rem; text-transform: uppercase; font-weight: 850; letter-spacing: .09em; }
+    .watch strong { display: block; font-size: .72rem; margin: 5px 0 4px; line-height: 1.25; }
+    .watch p { margin: 0; color: #aeb6bf; font-size: .56rem; line-height: 1.35; }
+    .watch button { width: 100%; border: 0; border-radius: 8px; margin-top: 10px; padding: 6px; background: var(--accent); color: var(--accent-ink); font-size: .56rem; font-weight: 900; cursor: pointer; }
+
+    .settings { margin: 0 14px; padding: 12px; border-radius: 14px; background: #0e1115; border: 1px solid #2e353d; }
+    .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; }
+    .setting-row + .setting-row { border-top: 1px solid #252b32; }
+    .setting-row label { font-size: .75rem; }
+    .setting-row small { display: block; color: var(--muted); font-size: .65rem; }
+    .switch { width: 36px; height: 21px; border-radius: 999px; border: 0; background: #3a424b; cursor: pointer; padding: 3px; }
+    .switch::after { content: ""; display: block; width: 15px; height: 15px; border-radius: 50%; background: #fff; transition: transform .2s; }
+    .switch.on { background: var(--accent); }
+    .switch.on::after { transform: translateX(15px); background: #111500; }
+
+    .prototype-note { grid-column: 1 / -1; border: 1px dashed #39414a; border-radius: 15px; padding: 12px 16px; color: #9ba5b0; font-size: .79rem; display: flex; justify-content: space-between; gap: 14px; align-items: center; }
+    .prototype-note a { color: var(--accent); text-underline-offset: 3px; }
+
+    .aw-section {
+      margin: 10px 24px 34px;
+      border: 1px solid #313841;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 12% -10%, rgba(216,255,67,.14), transparent 22rem),
+        radial-gradient(circle at 92% 18%, rgba(106,168,255,.10), transparent 24rem),
+        linear-gradient(145deg, #10141a 0%, #090b0f 72%);
+      box-shadow: 0 32px 80px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.035);
+    }
+    .aw-header { padding: 31px 31px 20px; display: flex; justify-content: space-between; align-items: end; gap: 30px; }
+    .aw-header .eyebrow { color: var(--accent); font-weight: 800; letter-spacing: .16em; }
+    .aw-header h2 { margin: 7px 0 7px; max-width: 760px; font-size: clamp(1.65rem, 2.6vw, 2.75rem); line-height: 1.02; letter-spacing: -.05em; }
+    .aw-header p { margin: 0; color: #aeb7c1; font-size: .84rem; max-width: 720px; }
+    .aw-header-side { display: grid; justify-items: end; gap: 10px; flex: 0 0 auto; }
+    .aw-connection { border: 1px solid #45505b; border-radius: 999px; padding: 8px 13px; font-size: .7rem; color: #d5dbe1; display: flex; align-items: center; gap: 8px; background: rgba(19,23,28,.84); }
+    .aw-promise { display: flex; gap: 13px; color: #7f8a96; font-size: .59rem; text-transform: uppercase; letter-spacing: .11em; }
+    .aw-promise span { display: flex; align-items: center; gap: 5px; }
+    .aw-promise span::before { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+    .aw-strip-wrap { overflow: visible; padding: 8px 22px 23px; }
+    .aw-strip { width: 100%; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; padding: 0; }
+    .aw-step { min-width: 0; position: relative; padding: 14px 8px 12px; border: 1px solid rgba(69,80,91,.54); border-radius: 19px; background: linear-gradient(180deg, rgba(27,32,39,.82), rgba(15,18,23,.88)); transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+    .aw-step:hover, .aw-step.is-active { transform: translateY(-3px); border-color: rgba(216,255,67,.7); box-shadow: 0 16px 36px rgba(0,0,0,.27), 0 0 0 1px rgba(216,255,67,.08); }
+    .aw-step:not(:last-child)::after { content: "›"; position: absolute; right: -10px; top: 47%; z-index: 4; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: var(--accent); background: #11151a; border: 1px solid #414a54; font-size: .9rem; line-height: 1; }
+    .aw-step-head { min-height: 57px; display: grid; grid-template-columns: 25px 1fr; gap: 8px; align-items: start; padding: 0 3px; }
+    .aw-number { width: 25px; height: 25px; border-radius: 8px; display: grid; place-items: center; color: var(--accent-ink); background: var(--accent); font-size: .63rem; font-weight: 900; box-shadow: 0 0 18px rgba(216,255,67,.16); }
+    .aw-step-head strong { display: block; font-size: .71rem; line-height: 1.25; }
+    .aw-step-head small { display: block; color: var(--muted); font-size: .56rem; margin-top: 2px; line-height: 1.3; }
+    .aw-watch-wrap { display: grid; place-items: center; position: relative; padding: 20px 0; }
+    .aw-strap { position: absolute; width: 66px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg,#171a1e,#3a4149 50%,#171a1e); border: 1px solid #3c444d; }
+    .aw-strap.top { height: 39px; top: 0; border-radius: 15px 15px 4px 4px; }
+    .aw-strap.bottom { height: 43px; bottom: 0; border-radius: 4px 4px 16px 16px; }
+    .aw-watch {
+      width: 142px; height: 174px; padding: 6px; border: 6px solid #3a424b; border-radius: 39px; background: #050607;
+      box-shadow: inset 0 0 0 1px #111, 0 18px 34px rgba(0,0,0,.44), 0 0 0 1px #66717c; position: relative; z-index: 1;
+    }
+    .aw-watch::after { content: ""; position: absolute; right: -10px; top: 39px; width: 4px; height: 27px; border-radius: 0 5px 5px 0; background: #68727d; }
+    .aw-screen { height: 100%; border-radius: 29px; background: radial-gradient(circle at 50% 0%, #161b20, #07090c 58%); overflow: hidden; padding: 8px 9px; display: flex; flex-direction: column; }
+    .aw-time { display: flex; justify-content: space-between; color: #8e98a3; font-size: .39rem; margin-bottom: 3px; }
+    .aw-app { color: var(--accent); font-size: .38rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+    .aw-screen h3 { margin: 4px 0 2px; font-size: .68rem; line-height: 1.1; letter-spacing: -.025em; }
+    .aw-task { color: #d2d8de; font-size: .46rem; font-weight: 760; }
+    .aw-copy { color: #a9b2bc; font-size: .42rem; line-height: 1.32; margin: 4px 0; }
+    .aw-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin: 4px 0; }
+    .aw-metric { border-radius: 6px; padding: 4px; background: #181c21; border: 1px solid #292f36; }
+    .aw-metric span { display: block; color: #8d97a2; font-size: .31rem; text-transform: uppercase; letter-spacing: .05em; }
+    .aw-metric strong { display: block; font-size: .45rem; margin-top: 1px; }
+    .aw-actions { display: grid; gap: 3px; margin-top: auto; }
+    .aw-button { border: 0; border-radius: 7px; padding: 4px; background: #2b3138; cursor: pointer; font-size: .4rem; font-weight: 850; }
+    .aw-button.primary { background: var(--accent); color: var(--accent-ink); }
+    .aw-button:hover { filter: brightness(1.15); }
+    .aw-result { margin: 4px 0; padding: 5px; border: 1px solid #2d343d; border-radius: 7px; background: #171b20; color: #d7dde2; font-size: .4rem; line-height: 1.3; }
+    .aw-result strong { display: block; color: var(--accent); font-size: .33rem; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 2px; }
+    .aw-orb { width: 36px; height: 36px; border-radius: 50%; margin: 6px auto 2px; display: grid; place-items: center; background: radial-gradient(circle, rgba(216,255,67,.28), rgba(216,255,67,.04)); border: 1px solid #454f59; position: relative; }
+    .aw-orb::before { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid rgba(216,255,67,.35); opacity: 0; }
+    .is-listening .aw-orb::before { animation: aw-pulse 1s infinite; }
+    .aw-mic { font-size: .78rem; }
+    .aw-wave { height: 13px; display: flex; justify-content: center; align-items: center; gap: 2px; }
+    .aw-wave i { width: 2px; height: 5px; border-radius: 999px; background: var(--accent); }
+    .is-listening .aw-wave i { animation: aw-wave .6s infinite alternate; }
+    .aw-wave i:nth-child(2), .aw-wave i:nth-child(6) { animation-delay: .1s; }
+    .aw-wave i:nth-child(3), .aw-wave i:nth-child(5) { animation-delay: .2s; }
+    .aw-wave i:nth-child(4) { animation-delay: .3s; }
+    .aw-spoken { text-align: center; color: #f2f4f5; font-size: .45rem; line-height: 1.28; margin: 2px 0; }
+    .aw-listening { text-align: center; color: var(--muted); font-size: .36rem; }
+    @keyframes aw-pulse { from { transform: scale(.85); opacity: .9; } to { transform: scale(1.3); opacity: 0; } }
+    @keyframes aw-wave { from { height: 4px; } to { height: 18px; } }
+
+    .aw-caption { margin-top: 6px; min-height: 55px; padding: 0 4px; }
+    .aw-caption span { display: block; color: var(--accent); font-size: .42rem; text-transform: uppercase; font-weight: 850; letter-spacing: .09em; }
+    .aw-caption p { color: #9fa9b4; font-size: .51rem; line-height: 1.38; margin: 3px 0 0; }
+    .aw-system-flow { border-top: 1px solid var(--line); padding: 16px 24px 19px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; color: #aab3bd; font-size: .65rem; background: rgba(7,9,12,.45); }
+    .aw-flow-label { color: var(--accent); font-weight: 850; text-transform: uppercase; letter-spacing: .1em; margin-right: 5px; }
+    .aw-node { border: 1px solid #353e47; background: #15191e; border-radius: 999px; padding: 6px 9px; color: #dbe0e5; }
+    .aw-arrow { color: var(--accent); }
+
+    .toast {
+      position: fixed; right: 26px; bottom: 26px; width: min(360px, calc(100% - 36px));
+      border: 1px solid #55606c; border-radius: 15px; background: #1a1f25; color: #fff;
+      padding: 14px 16px; box-shadow: 0 18px 50px rgba(0,0,0,.5); z-index: 50;
+      transform: translateY(25px); opacity: 0; pointer-events: none; transition: .24s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast strong { display: block; font-size: .87rem; }
+    .toast span { color: #aeb7c1; font-size: .76rem; }
+
+    @media (max-width: 1120px) {
+      .workspace { grid-template-columns: minmax(240px, .8fr) minmax(460px, 1.5fr); }
+      .devices { grid-column: 1 / -1; }
+      .device-stage { grid-template-columns: auto auto; align-items: center; }
+      .settings { margin: 0 18px; }
+      .aw-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .aw-step:nth-child(3)::after { display: none; }
+    }
+
+    @media (max-width: 820px) {
+      .app-shell { width: 100%; margin: 0; min-height: 100vh; border: 0; border-radius: 0; grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .topbar { height: auto; min-height: 74px; padding: 13px 16px; gap: 12px; }
+      .connection { display: none; }
+      .workspace { padding: 14px; grid-template-columns: 1fr; }
+      .devices { grid-column: auto; }
+      .task-list { grid-template-columns: 1fr; }
+      .prototype-note { grid-column: auto; align-items: flex-start; flex-direction: column; }
+      .aw-section { margin: 8px 14px 28px; }
+      .aw-header { align-items: flex-start; flex-direction: column; }
+      .aw-header-side { justify-items: start; }
+      .aw-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .aw-step:nth-child(2n)::after { display: none; }
+    }
+
+    @media (max-width: 520px) {
+      #resetDemo { display: none; }
+      .watch-flow-link { font-size: 0; width: 42px; justify-content: center; }
+      .watch-flow-link::after { content: "⌚"; font-size: 1rem; }
+      .metric-row { grid-template-columns: 1fr 1fr; }
+      .metric:last-child { grid-column: 1 / -1; }
+      .device-stage { grid-template-columns: 1fr; }
+      .action-buttons .btn { flex: 1 1 100%; }
+      .phone { width: 220px; }
+      .aw-strip { grid-template-columns: 1fr; }
+      .aw-step::after { display: none !important; }
+      .aw-watch { width: 164px; height: 200px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand">
+        <div class="brand-mark">✓</div>
+        <div><strong>DoneSure</strong><small>Codex Task Monitor</small></div>
+      </div>
+
+      <div>
+        <div class="nav-label">Workspace</div>
+        <nav class="nav">
+          <button class="active"><span>Task Monitor</span><span class="count">3</span></button>
+          <button><span>Alert History</span><span class="count">8</span></button>
+          <button><span>Devices & Channels</span></button>
+          <button><span>Rules</span></button>
+        </nav>
+      </div>
+
+      <div class="watch-card">
+        <div class="row"><span class="dot"></span><strong>Apple Watch connected</strong></div>
+        <p>Synced just now · iPhone notification mirroring is on</p>
+        <button class="text-btn" id="sidebarTest">Send test alert</button>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">Live workspace · demo</div>
+          <h1>Stop watching Codex. Important updates find you.</h1>
+        </div>
+        <div class="top-actions">
+          <div class="connection"><span class="dot"></span>Mac Studio · Online</div>
+          <a class="btn btn-link watch-flow-link" href="journey.html">Apple Watch journey</a>
+          <button class="btn" id="resetDemo">Reset demo</button>
+          <button class="btn primary" id="nextEvent">Simulate next event</button>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="DoneSure task monitoring prototype">
+        <section class="panel" aria-label="Task list">
+          <div class="panel-head"><h2>Codex Tasks</h2><small id="taskCount">3 tasks</small></div>
+          <div class="task-list" id="taskList"></div>
+        </section>
+
+        <section class="panel detail" aria-live="polite">
+          <div class="detail-title">
+            <span class="badge running" id="detailBadge">Running</span>
+            <h2 id="detailName">Refactor payment module</h2>
+            <p id="detailPrompt">Split checkout logic, add unit tests, and make sure every test passes.</p>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><span>Runtime</span><strong id="duration">18m 42s</strong></div>
+            <div class="metric"><span>Completion rule</span><strong id="rule">Tests pass</strong></div>
+            <div class="metric"><span>Alert policy</span><strong id="policy">When action is needed</strong></div>
+          </div>
+
+          <div class="timeline-wrap">
+            <div class="timeline-head"><strong>Live status</strong><span id="lastUpdate">Updated just now</span></div>
+            <div class="timeline" id="timeline"></div>
+          </div>
+
+          <div class="action-bar">
+            <div class="action-copy">
+              <div class="action-icon" id="actionIcon">↗</div>
+              <div><strong id="actionTitle">Task still running</strong><p id="actionDescription">DoneSure alerts you when it finishes, fails, or needs input.</p></div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn primary" id="mainAction">Simulate input request</button>
+              <button class="btn" id="openCodex">Open in Codex</button>
+              <button class="btn warn" id="retryAlert">Resend alert</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel devices" aria-label="Notification preview">
+          <div class="panel-head"><h2>Notification Preview</h2><small>iPhone + Watch</small></div>
+          <div class="device-stage">
+            <div class="phone" aria-label="iPhone notification preview">
+              <div class="island"></div>
+              <div class="phone-time">09:41</div>
+              <div class="notification">
+                <div class="notif-head"><span>DONESURE</span><span>NOW</span></div>
+                <div class="notif-title" id="phoneTitle">Codex is working</div>
+                <div class="notif-body" id="phoneBody">Refactor payment module · 2 of 4 stages complete.</div>
+                <div class="notif-actions">
+                  <button id="phoneAcknowledge">Acknowledge</button>
+                  <button id="phoneOpen">View task</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="watch" aria-label="Apple Watch notification preview">
+              <div class="tiny" id="watchStatus">Running</div>
+              <strong id="watchTitle">Refactor payment module</strong>
+              <p id="watchBody">Codex is running tests.</p>
+              <button id="watchAcknowledge">Acknowledge</button>
+            </div>
+          </div>
+
+          <div class="settings">
+            <div class="setting-row"><label>iPhone push<small>Completed, failed, or waiting for input</small></label><button class="switch on" aria-label="Toggle iPhone push" aria-pressed="true"></button></div>
+            <div class="setting-row"><label>Apple Watch<small>Mirror high-priority alerts</small></label><button class="switch on" aria-label="Toggle Apple Watch alerts" aria-pressed="true"></button></div>
+            <div class="setting-row"><label>Escalate if unacknowledged<small>Send another alert after 5 minutes</small></label><button class="switch on" aria-label="Toggle repeated alerts" aria-pressed="true"></button></div>
+          </div>
+        </section>
+
+        <div class="prototype-note">
+          <span><strong>Prototype tip:</strong> Select a task or click “Simulate next event” to experience Running → Needs input → Verifying → Verified complete.</span>
+        </div>
+      </section>
+
+      <section class="aw-section" id="apple-watch-flow" aria-labelledby="aw-title">
+        <div class="aw-header">
+          <div>
+            <div class="eyebrow">Apple Watch · Complete journey</div>
+            <h2 id="aw-title">From finished task to next decision—in one glance.</h2>
+            <p>A screenshot-ready, six-step journey: receive a verified result, understand what changed, speak to Codex, and continue the same task from your wrist.</p>
+          </div>
+          <div class="aw-header-side">
+            <div class="aw-connection"><span class="dot"></span>Watch ↔ iPhone ↔ Mac connected</div>
+            <div class="aw-promise"><span>Verified</span><span>Hands-free</span><span>Context-aware</span></div>
+          </div>
+        </div>
+
+        <div class="aw-strip-wrap" aria-label="Six-step Apple Watch interaction journey">
+          <div class="aw-strip" id="awStoryStrip">
+            <article class="aw-step" data-aw-step="1">
+              <div class="aw-step-head"><span class="aw-number">1</span><span><strong>Completion alert</strong><small>Haptic tap + verified outcome</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen">
+                <div class="aw-time"><span>9:41</span><span>●</span></div><span class="aw-app">✓ DoneSure</span><h3>Task complete</h3><div class="aw-task">Refactor payment module</div>
+                <div class="aw-metrics"><div class="aw-metric"><span>Tests</span><strong>68 / 68</strong></div><div class="aw-metric"><span>Runtime</span><strong>21 min</strong></div></div>
+                <p class="aw-copy">Checkout logic refactored. No blockers detected.</p><div class="aw-actions"><button class="aw-button primary aw-jump" data-aw-target="3">Ask Codex</button><button class="aw-button aw-jump" data-aw-target="2">View summary</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>What appears</span><p>Task name, verified status, test evidence, runtime, one-line summary, and the next actions.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="2">
+              <div class="aw-step-head"><span class="aw-number">2</span><span><strong>Review summary</strong><small>Glance at evidence and risk</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen">
+                <div class="aw-time"><span>9:41</span><span>●</span></div><span class="aw-app">Verified complete</span><h3>What changed</h3>
+                <div class="aw-result"><strong>Result summary</strong>8 files changed<br>14 tests added<br>68/68 tests passed<br>No blockers</div>
+                <div class="aw-actions"><button class="aw-button primary aw-jump" data-aw-target="3">Ask a question</button><button class="aw-button aw-handoff">Open on iPhone</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Decision point</span><p>The developer can accept the result, inspect more detail on iPhone, or ask Codex a follow-up.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="3">
+              <div class="aw-step-head"><span class="aw-number">3</span><span><strong>Ask by voice</strong><small>Tap the mic and dictate</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen aw-voice-screen">
+                <div class="aw-time"><span>9:42</span><span>●</span></div><span class="aw-app">Ask Codex</span><div class="aw-orb"><span class="aw-mic">🎙</span></div>
+                <div class="aw-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="aw-spoken">Tap to say “What changed?”</div><div class="aw-listening">Voice reply · English</div>
+                <div class="aw-actions"><button class="aw-button primary aw-mic-button">Start listening</button><button class="aw-button aw-jump" data-aw-target="4">Use sample question</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Voice path</span><p>The paired iPhone transcribes speech, and DoneSure adds the current task ID before sending it to Codex.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="4">
+              <div class="aw-step-head"><span class="aw-number">4</span><span><strong>Codex replies</strong><small>Short answer + haptic tap</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen">
+                <div class="aw-time"><span>9:42</span><span>●</span></div><span class="aw-app">Codex replied</span><h3>What changed</h3>
+                <div class="aw-result"><strong>Codex</strong>Moved checkout validation into PaymentService and added 14 unit tests. All 68 tests pass.</div>
+                <div class="aw-actions"><button class="aw-button primary aw-jump" data-aw-target="5">Reply by voice</button><button class="aw-button aw-done">Done</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Response design</span><p>The watch shows a concise answer. Full diffs and long output remain available on the phone or Mac.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="5">
+              <div class="aw-step-head"><span class="aw-number">5</span><span><strong>Give next command</strong><small>Continue the task by voice</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen is-listening">
+                <div class="aw-time"><span>9:43</span><span>●</span></div><span class="aw-app">Ask Codex</span><div class="aw-orb"><span class="aw-mic">🎙</span></div>
+                <div class="aw-spoken">“Create a pull request and send me the link.”</div><div class="aw-listening">Ready to send to the existing thread</div>
+                <div class="aw-actions"><button class="aw-button primary aw-jump" data-aw-target="6">Send command</button><button class="aw-button aw-done">Cancel</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Continuity</span><p>The new instruction enters the same Codex thread, preserving its files, decisions, and task context.</p></div>
+            </article>
+
+            <article class="aw-step" data-aw-step="6">
+              <div class="aw-step-head"><span class="aw-number">6</span><span><strong>Action confirmed</strong><small>PR ready + optional handoff</small></span></div>
+              <div class="aw-watch-wrap"><div class="aw-strap top"></div><div class="aw-strap bottom"></div><div class="aw-watch"><div class="aw-screen">
+                <div class="aw-time"><span>9:45</span><span>●</span></div><span class="aw-app">✓ Action complete</span><h3>Pull request created</h3><div class="aw-task">PR #284</div>
+                <div class="aw-result"><strong>Codex</strong>Created from codex/payment-refactor and ready for review.</div>
+                <div class="aw-actions"><button class="aw-button primary aw-handoff">Open on iPhone</button><button class="aw-button aw-jump" data-aw-target="1">Start over</button></div>
+              </div></div></div>
+              <div class="aw-caption"><span>Close the loop</span><p>The watch confirms the result. Review can continue on iPhone without losing conversation context.</p></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="aw-system-flow" aria-label="Voice message routing">
+          <span class="aw-flow-label">Behind the interaction</span>
+          <span class="aw-node">Apple Watch captures voice</span><span class="aw-arrow">→</span>
+          <span class="aw-node">iPhone transcribes</span><span class="aw-arrow">→</span>
+          <span class="aw-node">DoneSure adds task context</span><span class="aw-arrow">→</span>
+          <span class="aw-node">Codex runs on Mac</span><span class="aw-arrow">→</span>
+          <span class="aw-node">Watch receives concise reply</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"><strong id="toastTitle"></strong><span id="toastBody"></span></div>
+
+  <script>
+    const tasks = [
+      {
+        id: 'payment', name: 'Refactor payment module', prompt: 'Split checkout logic, add unit tests, and make sure every test passes.',
+        status: 'running', label: 'Running', duration: '18m 42s', rule: 'Tests pass', policy: 'When action is needed', phase: 0,
+        events: [
+          ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+          ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+          ['current', 'Run test suite', '42 of 68 tests passing', 'Now'],
+          ['', 'Verify completion criteria', 'Waiting for tests to finish', '—']
+        ]
+      },
+      {
+        id: 'release', name: 'Release v2.4.0', prompt: 'Update the version, generate the changelog, and create a release branch.',
+        status: 'attention', label: 'Needs input', duration: '07m 16s', rule: 'Human approval', policy: 'Alert immediately', phase: 1,
+        events: [
+          ['done', 'Review release contents', 'Found 12 commits to publish', '09:26'],
+          ['current', 'Request release permission', 'Approval required to push release/v2.4.0', 'Now'],
+          ['', 'Create release branch', 'Waiting for approval', '—'],
+          ['', 'Generate release summary', 'Not started', '—']
+        ]
+      },
+      {
+        id: 'bug', name: 'Fix login regression', prompt: 'Reproduce the mobile login failure, fix it, and run regression tests.',
+        status: 'complete', label: 'Verified complete', duration: '31m 08s', rule: 'Regression tests', policy: 'Alert on completion', phase: 3,
+        events: [
+          ['done', 'Reproduce login failure', 'Identified a token refresh race', '08:51'],
+          ['done', 'Apply fix', 'Updated refresh lock and retry logic', '09:04'],
+          ['done', 'Run regression tests', 'All 126 tests passed', '09:18'],
+          ['done', 'Verify completion criteria', 'Task outcome confirmed', '09:19']
+        ]
+      }
+    ];
+
+    const stages = [
+      { status: 'running', label: 'Running', badge: 'running', action: 'Simulate input request', icon: '↗', title: 'Task still running', desc: 'DoneSure alerts you when it finishes, fails, or needs input.', phoneTitle: 'Codex is working', phoneBody: 'Refactor payment module · Running tests.', watchStatus: 'RUNNING', watchBody: 'Codex is running tests.' },
+      { status: 'attention', label: 'Needs input', badge: 'attention', action: 'Approve and continue', icon: '!', title: 'Codex is waiting for your decision', desc: 'Approve network access to the test environment to continue.', phoneTitle: 'Codex needs your input', phoneBody: 'Refactor payment module · Requests access to the test database.', watchStatus: 'NEEDS INPUT', watchBody: 'Test database access requested.' },
+      { status: 'running', label: 'Verifying', badge: 'running', action: 'Complete verification', icon: '…', title: 'Checking whether the task is truly complete', desc: 'DoneSure checks the test results instead of treating “stopped” as “done.”', phoneTitle: 'Verifying completion criteria', phoneBody: 'Refactor payment module · All 68 tests passed.', watchStatus: 'VERIFYING', watchBody: 'Checking test results.' },
+      { status: 'complete', label: 'Verified complete', badge: 'complete', action: 'Run demo again', icon: '✓', title: 'Task is truly complete', desc: 'All tests passed. The result was sent to your iPhone and Apple Watch.', phoneTitle: 'Task verified complete', phoneBody: 'Refactor payment module · 68 tests passed in 21 minutes.', watchStatus: 'COMPLETED', watchBody: 'All 68 tests passed.' }
+    ];
+
+    let selectedId = 'payment';
+    let toastTimer;
+
+    const $ = (id) => document.getElementById(id);
+
+    function activeTask() { return tasks.find(t => t.id === selectedId); }
+    function stageFor(task) {
+      if (task.id === 'payment') return stages[task.phase];
+      if (task.status === 'attention') return { ...stages[1], phoneBody: task.name + ' · Release permission required.', watchBody: 'Release permission required.' };
+      return { ...stages[3], phoneBody: task.name + ' · All regression tests passed.', watchBody: 'All regression tests passed.' };
+    }
+
+    function renderTasks() {
+      $('taskList').innerHTML = tasks.map(task => `
+        <button class="task ${task.id === selectedId ? 'active' : ''}" data-id="${task.id}">
+          <div class="task-top"><span class="task-title">${task.name}</span><span class="badge ${task.status}">${task.label}</span></div>
+          <div class="task-meta">${task.duration} · ${task.rule}</div>
+        </button>`).join('');
+      document.querySelectorAll('.task').forEach(btn => btn.addEventListener('click', () => { selectedId = btn.dataset.id; render(); }));
+    }
+
+    function renderTimeline(events) {
+      $('timeline').innerHTML = events.map(([state, title, desc, time]) => `
+        <div class="event ${state}"><span class="event-dot"></span><div><strong>${title}</strong><p>${desc}</p></div><time>${time}</time></div>`).join('');
+    }
+
+    function render() {
+      const task = activeTask();
+      const stage = stageFor(task);
+      renderTasks();
+      $('detailBadge').className = `badge ${stage.badge}`;
+      $('detailBadge').textContent = stage.label;
+      $('detailName').textContent = task.name;
+      $('detailPrompt').textContent = task.prompt;
+      $('duration').textContent = task.duration;
+      $('rule').textContent = task.rule;
+      $('policy').textContent = task.policy;
+      $('actionIcon').textContent = stage.icon;
+      $('actionTitle').textContent = stage.title;
+      $('actionDescription').textContent = stage.desc;
+      $('mainAction').textContent = stage.action;
+      $('phoneTitle').textContent = stage.phoneTitle;
+      $('phoneBody').textContent = stage.phoneBody;
+      $('watchStatus').textContent = stage.watchStatus;
+      $('watchTitle').textContent = task.name;
+      $('watchBody').textContent = stage.watchBody;
+      renderTimeline(task.events);
+    }
+
+    function showToast(title, body) {
+      clearTimeout(toastTimer);
+      $('toastTitle').textContent = title;
+      $('toastBody').textContent = body;
+      $('toast').classList.add('show');
+      toastTimer = setTimeout(() => $('toast').classList.remove('show'), 3200);
+    }
+
+    function updatePaymentPhase(nextPhase) {
+      const task = tasks[0];
+      task.phase = nextPhase;
+      const stage = stages[nextPhase];
+      task.status = stage.badge;
+      task.label = stage.label;
+      if (nextPhase === 1) {
+        task.duration = '19m 04s';
+        task.events = [
+          ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+          ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+          ['done', 'Run test suite', 'Test database connection required', '09:40'],
+          ['current', 'Wait for permission', 'Test database access requested', 'Now']
+        ];
+        showToast('Your input is needed', '“Refactor payment module” is waiting for database access.');
+      } else if (nextPhase === 2) {
+        task.duration = '19m 38s';
+        task.events = [
+          ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+          ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+          ['done', 'Run test suite', 'All 68 tests passed', '09:41'],
+          ['current', 'Verify completion criteria', 'Checking tests against the task', 'Now']
+        ];
+        showToast('Task resumed', 'Permission approved. DoneSure is checking the completion criteria.');
+      } else if (nextPhase === 3) {
+        task.duration = '21m 03s';
+        task.events = [
+          ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+          ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+          ['done', 'Run test suite', 'All 68 tests passed', '09:41'],
+          ['done', 'Verify completion criteria', 'Task outcome confirmed', '09:43']
+        ];
+        showToast('Task verified complete', '68 tests passed. Completion alerts were sent to your phone and watch.');
+      } else {
+        resetDemo(false);
+        showToast('Demo restarted', 'Codex is running “Refactor payment module.”');
+      }
+      render();
+    }
+
+    function nextEvent() {
+      selectedId = 'payment';
+      const next = (tasks[0].phase + 1) % 4;
+      updatePaymentPhase(next);
+    }
+
+    function resetDemo(withToast = true) {
+      selectedId = 'payment';
+      const task = tasks[0];
+      task.phase = 0; task.status = 'running'; task.label = 'Running'; task.duration = '18m 42s';
+      task.events = [
+        ['done', 'Analyze code and dependencies', 'Found 8 related files', '09:22'],
+        ['done', 'Complete core refactor', 'New checkout service implemented', '09:31'],
+        ['current', 'Run test suite', '42 of 68 tests passing', 'Now'],
+        ['', 'Verify completion criteria', 'Waiting for tests to finish', '—']
+      ];
+      render();
+      if (withToast) showToast('Demo reset', 'You can experience the full notification flow again.');
+    }
+
+    $('nextEvent').addEventListener('click', nextEvent);
+    $('mainAction').addEventListener('click', nextEvent);
+    $('resetDemo').addEventListener('click', () => resetDemo(true));
+    $('sidebarTest').addEventListener('click', () => showToast('Test alert sent', 'Check the iPhone and Apple Watch previews on the right.'));
+    $('retryAlert').addEventListener('click', () => showToast('Alert resent', 'The high-priority alert was sent to both devices again.'));
+    $('openCodex').addEventListener('click', () => showToast('Opening Codex', 'Prototype behavior: the real product would open the matching task.'));
+    $('phoneOpen').addEventListener('click', () => showToast('Task details', activeTask().name + ' opened in DoneSure.'));
+    ['phoneAcknowledge', 'watchAcknowledge'].forEach(id => $(id).addEventListener('click', () => showToast('Alert acknowledged', 'Escalation stopped and the confirmation time was added to alert history.')));
+    document.querySelectorAll('.switch').forEach(sw => sw.addEventListener('click', () => {
+      sw.classList.toggle('on');
+      sw.setAttribute('aria-pressed', sw.classList.contains('on') ? 'true' : 'false');
+      showToast('Notification settings updated', sw.classList.contains('on') ? 'This channel is now on.' : 'This channel is paused.');
+    }));
+
+    function scrollToWatchStep(stepNumber) {
+      const target = document.querySelector(`[data-aw-step="${stepNumber}"]`);
+      document.querySelectorAll('.aw-step').forEach(step => step.classList.remove('is-active'));
+      if (target) {
+        target.classList.add('is-active');
+        window.setTimeout(() => target.classList.remove('is-active'), 1800);
+      }
+    }
+
+    document.querySelectorAll('.aw-jump').forEach(button => button.addEventListener('click', () => {
+      const target = Number(button.dataset.awTarget);
+      scrollToWatchStep(target);
+      const messages = {
+        1: ['Flow restarted', 'The completion notification is back on screen.'],
+        2: ['Task summary opened', 'Review changes, test evidence, and blockers at a glance.'],
+        3: ['Voice reply ready', 'Tap “Start listening” and speak naturally.'],
+        4: ['Codex replied', 'A concise response arrived with a haptic tap.'],
+        5: ['Follow-up ready', 'Continue the same Codex task with another voice command.'],
+        6: ['Command sent', 'Codex created PR #284 and returned the result to your watch.']
+      };
+      showToast(messages[target][0], messages[target][1]);
+    }));
+
+    document.querySelectorAll('.aw-mic-button').forEach(button => button.addEventListener('click', () => {
+      const screen = button.closest('.aw-screen');
+      const isListening = screen.classList.toggle('is-listening');
+      screen.querySelector('.aw-spoken').textContent = isListening ? '“What changed?”' : 'Tap to say “What changed?”';
+      screen.querySelector('.aw-listening').textContent = isListening ? 'Transcribing on iPhone…' : 'Voice reply · English';
+      button.textContent = isListening ? 'Send to Codex' : 'Start listening';
+      if (isListening) {
+        showToast('Listening on Apple Watch', 'Say “What changed?” naturally.');
+      } else {
+        scrollToWatchStep(4);
+        showToast('Voice message sent', 'Codex received the transcript in the existing task.');
+      }
+    }));
+
+    document.querySelectorAll('.aw-handoff').forEach(button => button.addEventListener('click', () => {
+      showToast('Handing off to iPhone', 'The full Codex task opens with the same conversation context.');
+    }));
+    document.querySelectorAll('.aw-done').forEach(button => button.addEventListener('click', () => {
+      showToast('Watch action closed', 'The task and conversation remain available in DoneSure history.');
+    }));
+
+    render();
+  </script>
+</body>
+</html>

@@ -3,408 +3,143 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A six-step Apple Watch journey for receiving Codex results and continuing work by voice.">
+  <meta name="description" content="The six-step DoneSure Apple Watch journey for long-running Codex tasks.">
   <title>DoneSure · Apple Watch Journey</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b0d10'/%3E%3Cpath d='M17 34l9 9 21-23' fill='none' stroke='%23d8ff43' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <style>
-    :root {
-      color-scheme: dark;
-      --bg: #07090c;
-      --surface: #11151a;
-      --surface-2: #181d23;
-      --line: #303842;
-      --muted: #939daa;
-      --text: #f7f8fa;
-      --accent: #d8ff43;
-      --accent-ink: #111500;
-      --green: #58db87;
-      --blue: #70aaff;
-      --orange: #ffb454;
-    }
+    :root { color-scheme:light; --paper:#f5eee7; --paper-2:#fffaf4; --ink:#20201f; --muted:#706b66; --soft:#d7ccc4; --red:#dc4027; --red-dark:#b82e19; --watch:#090a0c; --green:#78a13a; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button { font:inherit; }
+    a { color:inherit; }
+    .topbar { height:68px; padding:0 clamp(20px,4vw,64px); display:flex; align-items:center; justify-content:space-between; gap:20px; border-bottom:1px solid #d9cec6; background:rgba(245,238,231,.9); backdrop-filter:blur(14px); position:sticky; top:0; z-index:20; }
+    .brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .mark { width:34px; height:34px; display:grid; place-items:center; border-radius:50%; background:var(--red); color:#fff; font-weight:900; }
+    .brand strong { display:block; font-size:.92rem; }
+    .brand small { display:block; color:var(--muted); font-size:.64rem; }
+    .nav { display:flex; align-items:center; gap:10px; }
+    .nav a { padding:8px 11px; border:1px solid #cfc3bb; border-radius:999px; text-decoration:none; font-size:.7rem; }
+    .nav a.primary { background:var(--red); border-color:var(--red); color:#fff; }
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      overflow-x: hidden;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 12% 0%, rgba(216,255,67,.12), transparent 25rem),
-        radial-gradient(circle at 90% 24%, rgba(112,170,255,.09), transparent 28rem),
-        var(--bg);
-      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    button { font: inherit; color: inherit; }
-    a { color: inherit; }
+    .page { width:min(1500px,calc(100% - 48px)); margin:0 auto; }
+    .intro { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr); gap:56px; align-items:end; padding:54px 0 38px; border-bottom:2px solid var(--red); }
+    .eyebrow { color:var(--red); font-size:.72rem; font-weight:850; letter-spacing:.16em; text-transform:uppercase; }
+    h1 { margin:10px 0 12px; max-width:980px; font-size:clamp(2.7rem,5vw,5.8rem); line-height:.95; letter-spacing:-.06em; }
+    .intro p { margin:0; max-width:800px; color:#5f5a55; font-size:1rem; line-height:1.55; }
+    .intro-side { justify-self:end; max-width:360px; }
+    .wordmark { color:var(--red); font-size:clamp(3.2rem,6vw,6rem); line-height:.85; font-weight:850; font-style:italic; letter-spacing:-.06em; text-align:right; }
+    .intro-side p { margin-top:18px; font-size:.78rem; text-align:right; }
 
-    .topbar {
-      min-height: 62px;
-      padding: 10px clamp(20px, 4vw, 64px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      border-bottom: 1px solid rgba(76,87,99,.55);
-      background: rgba(7,9,12,.76);
-      backdrop-filter: blur(18px);
-    }
-    .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; }
-    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--accent); color: var(--accent-ink); font-size: 1.15rem; font-weight: 900; }
-    .brand strong { display: block; font-size: .95rem; }
-    .brand small { display: block; color: var(--muted); font-size: .65rem; }
-    .top-actions { display: flex; align-items: center; gap: 10px; }
-    .connection { display: flex; align-items: center; gap: 8px; color: #cbd2da; font-size: .72rem; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 5px rgba(88,219,135,.1); }
-    .back { text-decoration: none; border: 1px solid #3a434d; border-radius: 10px; padding: 8px 11px; font-size: .72rem; background: rgba(20,24,29,.8); }
+    .section-head { display:flex; align-items:end; justify-content:space-between; gap:24px; padding:34px 0 20px; }
+    .section-head h2 { margin:5px 0 0; font-size:clamp(1.7rem,3vw,3rem); line-height:1.05; letter-spacing:-.04em; }
+    .section-head p { margin:0; max-width:520px; color:var(--muted); font-size:.76rem; line-height:1.5; text-align:right; }
+    .chapters { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid #cfc3bb; border-left:1px solid #cfc3bb; background:var(--paper-2); }
+    .chapter { min-width:0; position:relative; padding:28px; border-right:1px solid #cfc3bb; border-bottom:1px solid #cfc3bb; }
+    .chapter-head { display:grid; grid-template-columns:76px 1fr; gap:16px; align-items:start; min-height:82px; }
+    .chapter-number { color:#cfc5bd; font-size:3.7rem; font-weight:650; line-height:.85; letter-spacing:-.06em; }
+    .chapter h3 { margin:2px 0 5px; font-size:1.15rem; line-height:1.14; }
+    .chapter-head p { margin:0; color:var(--muted); font-size:.7rem; line-height:1.4; }
+    .chapter-body { display:grid; grid-template-columns:190px 1fr; gap:22px; align-items:center; margin-top:18px; }
+    .watch-wrap { position:relative; display:grid; place-items:center; padding:28px 0; }
+    .strap { position:absolute; left:50%; width:78px; transform:translateX(-50%); background:linear-gradient(90deg,#242426,#555358 50%,#242426); border:1px solid #646166; }
+    .strap.top { top:0; height:52px; border-radius:18px 18px 5px 5px; }
+    .strap.bottom { bottom:0; height:56px; border-radius:5px 5px 19px 19px; }
+    .watch { z-index:1; width:174px; height:210px; padding:7px; border:7px solid #3c3d40; border-radius:46px; background:#050607; box-shadow:0 20px 36px rgba(49,38,31,.24),0 0 0 1px #6f7074; position:relative; }
+    .watch::after { content:""; position:absolute; right:-12px; top:47px; width:5px; height:32px; border-radius:0 5px 5px 0; background:#5f6063; }
+    .screen { height:100%; padding:10px 11px; border-radius:34px; overflow:hidden; display:flex; flex-direction:column; color:#f7f7f7; background:radial-gradient(circle at 50% 0%,#202226,#07080a 62%); }
+    .time { display:flex; justify-content:space-between; color:#8e9196; font-size:.43rem; }
+    .app { margin-top:4px; color:#ff684d; font-size:.42rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    .screen h4 { margin:5px 0 3px; font-size:.78rem; line-height:1.1; }
+    .task { color:#d0d2d4; font-size:.5rem; font-weight:750; }
+    .copy { margin:5px 0; color:#a7aaae; font-size:.44rem; line-height:1.35; }
+    .metrics { display:grid; grid-template-columns:1fr 1fr; gap:4px; margin:6px 0; }
+    .metric { padding:5px; border-radius:7px; background:#1b1d20; }
+    .metric span { display:block; color:#85898e; font-size:.32rem; text-transform:uppercase; }
+    .metric strong { display:block; margin-top:1px; font-size:.49rem; }
+    .result { margin:6px 0; padding:6px; border:1px solid #34373c; border-radius:8px; background:#191b1f; color:#d9dade; font-size:.43rem; line-height:1.35; }
+    .result strong { display:block; margin-bottom:2px; color:#ff684d; font-size:.34rem; text-transform:uppercase; letter-spacing:.06em; }
+    .risk { display:flex; justify-content:space-between; margin-top:4px; padding-top:4px; border-top:1px solid #34373c; color:#ffb27d; }
+    .actions { display:grid; gap:4px; margin-top:auto; }
+    .watch-button { border:0; border-radius:8px; padding:5px; background:#2c2f34; color:#fff; cursor:pointer; font-size:.42rem; font-weight:850; }
+    .watch-button.primary { background:var(--red); }
+    .voice { width:44px; height:44px; display:grid; place-items:center; margin:8px auto 4px; border:1px solid #4b4e53; border-radius:50%; background:radial-gradient(circle,rgba(232,63,37,.36),rgba(232,63,37,.03)); }
+    .spoken { margin:3px 0; text-align:center; font-size:.47rem; line-height:1.32; }
+    .voice-state { color:#96999d; text-align:center; font-size:.36rem; }
+    .meaning { align-self:stretch; display:flex; flex-direction:column; justify-content:center; padding-left:4px; }
+    .meaning span { color:var(--red); font-size:.58rem; font-weight:850; text-transform:uppercase; letter-spacing:.1em; }
+    .meaning p { margin:6px 0 0; color:#5f5a55; font-size:.7rem; line-height:1.48; }
 
-    .hero {
-      width: min(1720px, calc(100% - 48px));
-      margin: 24px auto 18px;
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 30px;
-    }
-    .eyebrow { color: var(--accent); font-size: .68rem; font-weight: 850; text-transform: uppercase; letter-spacing: .17em; }
-    h1 { margin: 6px 0 5px; max-width: 960px; font-size: clamp(2rem, 3.6vw, 4rem); line-height: 1; letter-spacing: -.055em; }
-    .hero p { max-width: 800px; margin: 0; color: #aab4bf; font-size: .9rem; line-height: 1.45; }
-    .promise { flex: 0 0 auto; display: flex; gap: 8px; flex-wrap: wrap; justify-content: end; }
-    .promise span, .promise a { border: 1px solid #38414b; border-radius: 999px; padding: 7px 10px; color: #cdd4db; background: rgba(18,22,27,.78); font-size: .62rem; text-transform: uppercase; letter-spacing: .08em; text-decoration: none; }
-    .promise a { border-color: rgba(216,255,67,.42); color: var(--accent); }
-
-    .journey {
-      width: min(1720px, calc(100% - 48px));
-      margin: 0 auto 28px;
-      padding: 18px;
-      border: 1px solid #333b45;
-      border-radius: 26px;
-      background: linear-gradient(145deg, rgba(17,21,26,.96), rgba(9,11,15,.96));
-      box-shadow: 0 34px 90px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.035);
-    }
-    .journey-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 0 5px 14px; }
-    .journey-head strong { font-size: .78rem; }
-    .journey-head span { color: var(--muted); font-size: .68rem; }
-    .steps { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 18px; }
-    .step {
-      min-width: 0;
-      position: relative;
-      padding: 15px 14px 14px;
-      border: 1px solid rgba(68,79,91,.68);
-      border-radius: 19px;
-      background: linear-gradient(180deg, rgba(28,33,40,.88), rgba(14,17,22,.88));
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-    }
-    .step:hover, .step.active { transform: translateY(-4px); border-color: rgba(216,255,67,.74); box-shadow: 0 18px 38px rgba(0,0,0,.28), 0 0 0 1px rgba(216,255,67,.08); }
-    .step:not(:last-child)::after { content: "›"; position: absolute; z-index: 5; right: -13px; top: 48%; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; border: 1px solid #49535e; background: #11151a; color: var(--accent); font-size: 1.1rem; }
-    .step-heading { min-height: 56px; display: grid; grid-template-columns: 28px 1fr; gap: 9px; align-items: start; }
-    .number { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font-size: .68rem; font-weight: 900; box-shadow: 0 0 20px rgba(216,255,67,.15); }
-    .step-heading strong { display: block; font-size: .76rem; line-height: 1.25; }
-    .step-heading small { display: block; margin-top: 2px; color: var(--muted); font-size: .59rem; line-height: 1.28; }
-
-    .watch-wrap { position: relative; display: grid; place-items: center; padding: 26px 0; }
-    .strap { position: absolute; left: 50%; width: 78px; transform: translateX(-50%); border: 1px solid #434b55; background: linear-gradient(90deg,#171a1e,#3a4149 50%,#171a1e); }
-    .strap.top { top: 0; height: 48px; border-radius: 18px 18px 5px 5px; }
-    .strap.bottom { bottom: 0; height: 52px; border-radius: 5px 5px 18px 18px; }
-    .watch {
-      z-index: 1;
-      width: 166px;
-      height: 204px;
-      padding: 7px;
-      border: 7px solid #3b434c;
-      border-radius: 45px;
-      background: #050607;
-      box-shadow: inset 0 0 0 1px #111, 0 22px 38px rgba(0,0,0,.46), 0 0 0 1px #65707b;
-      position: relative;
-    }
-    .watch::after { content: ""; position: absolute; right: -12px; top: 46px; width: 5px; height: 31px; border-radius: 0 5px 5px 0; background: #68727d; }
-    .screen { height: 100%; padding: 9px 10px; display: flex; flex-direction: column; overflow: hidden; border-radius: 33px; background: radial-gradient(circle at 50% 0%, #161b20, #07090c 60%); }
-    .time { display: flex; justify-content: space-between; margin-bottom: 4px; color: #8e98a3; font-size: .43rem; }
-    .app { color: var(--accent); font-size: .42rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
-    .screen h2 { margin: 5px 0 3px; font-size: .78rem; line-height: 1.12; letter-spacing: -.025em; }
-    .task { color: #d5dbe1; font-size: .5rem; font-weight: 750; }
-    .copy { margin: 5px 0; color: #a8b1bb; font-size: .46rem; line-height: 1.35; }
-    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 5px 0; }
-    .metric { padding: 5px; border: 1px solid #2b323a; border-radius: 7px; background: #191d22; }
-    .metric span { display: block; color: #89939e; font-size: .33rem; text-transform: uppercase; }
-    .metric strong { display: block; margin-top: 1px; font-size: .5rem; }
-    .result { margin: 5px 0; padding: 6px; border: 1px solid #303842; border-radius: 8px; background: #181d23; color: #d7dde3; font-size: .44rem; line-height: 1.35; }
-    .result strong { display: block; margin-bottom: 2px; color: var(--accent); font-size: .35rem; text-transform: uppercase; letter-spacing: .07em; }
-    .risk-line { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin-top: 4px; padding-top: 4px; border-top: 1px solid #303842; color: #ffd29a; }
-    .risk-line b { font-size: .35rem; text-transform: uppercase; letter-spacing: .05em; }
-    .actions { display: grid; gap: 4px; margin-top: auto; }
-    .watch-button { border: 0; border-radius: 8px; padding: 5px; background: #2b3138; font-size: .43rem; font-weight: 850; cursor: pointer; }
-    .watch-button.primary { background: var(--accent); color: var(--accent-ink); }
-    .watch-button:hover { filter: brightness(1.14); }
-    .voice-orb { width: 43px; height: 43px; display: grid; place-items: center; margin: 7px auto 3px; border: 1px solid #46505a; border-radius: 50%; background: radial-gradient(circle, rgba(216,255,67,.27), rgba(216,255,67,.03)); position: relative; }
-    .voice-orb::before { content: ""; position: absolute; inset: -5px; border: 1px solid rgba(216,255,67,.34); border-radius: 50%; opacity: 0; }
-    .listening .voice-orb::before { animation: pulse 1s infinite; }
-    .spoken { margin: 3px 0; text-align: center; font-size: .47rem; line-height: 1.3; }
-    .voice-status { text-align: center; color: var(--muted); font-size: .37rem; }
-    .wave { height: 14px; display: flex; align-items: center; justify-content: center; gap: 2px; }
-    .wave i { width: 2px; height: 5px; border-radius: 999px; background: var(--accent); }
-    .listening .wave i { animation: wave .6s infinite alternate; }
-    .wave i:nth-child(2), .wave i:nth-child(6) { animation-delay: .1s; }
-    .wave i:nth-child(3), .wave i:nth-child(5) { animation-delay: .2s; }
-    @keyframes pulse { from { transform: scale(.86); opacity: .9; } to { transform: scale(1.3); opacity: 0; } }
-    @keyframes wave { from { height: 4px; } to { height: 13px; } }
-
-    .why { min-height: 58px; padding: 2px 2px 0; }
-    .why span { display: block; color: var(--accent); font-size: .46rem; font-weight: 850; text-transform: uppercase; letter-spacing: .09em; }
-    .why p { margin: 4px 0 0; color: #9ea8b3; font-size: .55rem; line-height: 1.4; }
-
-    .system-flow { margin-top: 16px; padding: 14px 8px 0; border-top: 1px solid #29313a; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
-    .flow-label { color: var(--accent); font-size: .58rem; font-weight: 850; text-transform: uppercase; letter-spacing: .1em; margin-right: 4px; }
-    .node { border: 1px solid #36404a; border-radius: 999px; padding: 6px 9px; background: #15191e; color: #d4dae0; font-size: .61rem; }
-    .arrow { color: var(--accent); font-size: .7rem; }
-
-    .complex-panel {
-      width: min(1720px, calc(100% - 48px));
-      margin: 0 auto 48px;
-      padding: clamp(22px, 3vw, 42px);
-      border: 1px solid #343d47;
-      border-radius: 28px;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 22% 20%, rgba(255,180,84,.09), transparent 24rem),
-        radial-gradient(circle at 82% 70%, rgba(112,170,255,.08), transparent 28rem),
-        linear-gradient(145deg, #12161c, #090b0f);
-      box-shadow: 0 34px 90px rgba(0,0,0,.34);
-    }
-    .complex-header { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 28px; }
-    .complex-header h2 { margin: 7px 0 6px; max-width: 780px; font-size: clamp(1.7rem, 3vw, 3rem); line-height: 1.03; letter-spacing: -.045em; }
-    .complex-header p { margin: 0; max-width: 720px; color: #a9b3bd; font-size: .85rem; line-height: 1.5; }
-    .principle { flex: 0 0 auto; padding: 10px 13px; border: 1px solid rgba(216,255,67,.32); border-radius: 13px; background: rgba(216,255,67,.06); color: #dff780; font-size: .68rem; line-height: 1.45; }
-    .complex-grid { display: grid; grid-template-columns: minmax(250px,.7fr) minmax(250px,.72fr) minmax(430px,1.25fr); gap: 20px; align-items: stretch; }
-    .scenario, .device-showcase, .layers { border: 1px solid rgba(64,74,85,.7); border-radius: 20px; background: rgba(14,17,22,.76); }
-    .scenario { padding: 22px; }
-    .scenario-label { color: var(--orange); font-size: .58rem; font-weight: 850; text-transform: uppercase; letter-spacing: .12em; }
-    .scenario h3 { margin: 8px 0 7px; font-size: 1.18rem; line-height: 1.15; letter-spacing: -.025em; }
-    .scenario > p { margin: 0 0 18px; color: var(--muted); font-size: .72rem; line-height: 1.5; }
-    .scenario-facts { display: grid; gap: 8px; }
-    .scenario-fact { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; padding: 10px; border-radius: 12px; background: #171c22; }
-    .scenario-fact span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; background: #252c34; color: var(--accent); font-size: .68rem; font-weight: 900; }
-    .scenario-fact strong { display: block; font-size: .72rem; }
-    .scenario-fact small { display: block; margin-top: 2px; color: var(--muted); font-size: .61rem; line-height: 1.35; }
-    .device-showcase { display: grid; place-items: center; padding: 22px 18px; background: linear-gradient(180deg, rgba(28,33,40,.72), rgba(10,12,16,.78)); }
-    .large-watch-wrap { position: relative; display: grid; place-items: center; padding: 48px 22px; }
-    .large-strap { position: absolute; left: 50%; width: 102px; transform: translateX(-50%); border: 1px solid #48515b; background: linear-gradient(90deg,#171a1e,#3d454e 50%,#171a1e); }
-    .large-strap.top { top: 0; height: 76px; border-radius: 23px 23px 6px 6px; }
-    .large-strap.bottom { bottom: 0; height: 82px; border-radius: 6px 6px 24px 24px; }
-    .large-watch { z-index: 1; width: 214px; height: 260px; padding: 9px; border: 9px solid #3d454e; border-radius: 58px; background: #050607; box-shadow: inset 0 0 0 1px #111, 0 28px 50px rgba(0,0,0,.5), 0 0 0 1px #69747f; position: relative; }
-    .large-watch::after { content: ""; position: absolute; right: -15px; top: 58px; width: 6px; height: 40px; border-radius: 0 6px 6px 0; background: #68727d; }
-    .large-screen { height: 100%; padding: 13px 14px; display: flex; flex-direction: column; border-radius: 43px; background: radial-gradient(circle at 50% 0%, #1a2026, #07090c 62%); }
-    .large-screen .time { font-size: .5rem; }
-    .large-screen .app { font-size: .5rem; }
-    .large-screen h3 { margin: 6px 0 4px; font-size: .95rem; line-height: 1.12; }
-    .summary-box { margin: 5px 0; padding: 8px; border: 1px solid #333c45; border-radius: 10px; background: #181d23; }
-    .summary-box span { display: block; color: var(--orange); font-size: .42rem; font-weight: 850; text-transform: uppercase; letter-spacing: .07em; }
-    .summary-box p { margin: 3px 0 0; color: #d9dee3; font-size: .56rem; line-height: 1.38; }
-    .finding-list { display: grid; gap: 4px; margin: 3px 0 6px; }
-    .finding { display: flex; align-items: center; gap: 6px; color: #b7c0ca; font-size: .49rem; }
-    .finding::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
-    .layers { padding: 20px; display: flex; flex-direction: column; }
-    .layers-title { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 13px; }
-    .layers-title strong { font-size: .82rem; }
-    .layers-title span { color: var(--muted); font-size: .62rem; }
-    .layer-list { display: grid; gap: 9px; }
-    .layer { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; padding: 12px; border: 1px solid #2f3740; border-radius: 14px; background: #151a20; }
-    .layer-number { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: #232a32; color: var(--accent); font-weight: 900; font-size: .72rem; }
-    .layer strong { display: block; font-size: .74rem; }
-    .layer p { margin: 2px 0 0; color: var(--muted); font-size: .62rem; line-height: 1.35; }
-    .layer-tag { border: 1px solid #3c4650; border-radius: 999px; padding: 5px 8px; color: #cbd2d9; font-size: .54rem; white-space: nowrap; }
-    .approval { margin-top: auto; padding: 12px; border: 1px solid rgba(255,180,84,.32); border-radius: 14px; background: rgba(255,180,84,.07); display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-    .approval strong { display: block; color: #ffd29a; font-size: .69rem; }
-    .approval p { margin: 2px 0 0; color: #b8a58e; font-size: .59rem; line-height: 1.35; }
-    .approval button { border: 1px solid #705b41; border-radius: 9px; padding: 7px 9px; background: #2b241a; color: #ffd29a; font-size: .58rem; font-weight: 800; cursor: pointer; }
-
-    .toast { position: fixed; right: 24px; bottom: 24px; width: min(350px, calc(100% - 32px)); padding: 13px 15px; border: 1px solid #56616c; border-radius: 15px; background: #1c2127; box-shadow: 0 18px 48px rgba(0,0,0,.5); transform: translateY(24px); opacity: 0; pointer-events: none; transition: .22s; z-index: 20; }
-    .toast.show { opacity: 1; transform: translateY(0); }
-    .toast strong { display: block; font-size: .8rem; }
-    .toast span { display: block; margin-top: 2px; color: var(--muted); font-size: .7rem; }
-
-    @media (max-width: 1370px) {
-      .steps { gap: 12px; }
-      .step { padding-inline: 9px; }
-      .watch { width: 150px; height: 186px; }
-    }
-    @media (max-width: 1120px) {
-      .steps { grid-template-columns: repeat(3, minmax(0,1fr)); }
-      .step:nth-child(3)::after { display: none; }
-      .watch { width: 176px; height: 216px; }
-      .hero { align-items: flex-start; flex-direction: column; }
-      .promise { justify-content: flex-start; }
-      .complex-grid { grid-template-columns: 1fr 1fr; }
-      .layers { grid-column: 1 / -1; }
-    }
-    @media (max-width: 720px) {
-      .connection { display: none; }
-      .hero, .journey, .complex-panel { width: calc(100% - 24px); }
-      .hero { margin-top: 20px; }
-      .steps { grid-template-columns: 1fr; }
-      .step::after { display: none !important; }
-      .watch { width: 186px; height: 228px; }
-      .journey-head { align-items: flex-start; flex-direction: column; }
-      .complex-header { align-items: flex-start; flex-direction: column; }
-      .complex-grid { grid-template-columns: 1fr; }
-      .layers { grid-column: auto; }
-      .layer { grid-template-columns: 42px 1fr; }
-      .layer-tag { grid-column: 2; justify-self: start; }
-      .approval { align-items: flex-start; flex-direction: column; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; }
-    }
+    .complex { margin:56px 0 48px; padding-top:32px; border-top:2px solid var(--red); }
+    .complex-title { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:30px; align-items:start; }
+    .complex-title h2 { margin:7px 0 8px; max-width:880px; color:var(--red); font-size:clamp(2rem,4vw,4.1rem); line-height:1; letter-spacing:-.05em; }
+    .complex-title p { max-width:760px; margin:0; color:var(--muted); font-size:.84rem; line-height:1.5; }
+    .rule { color:var(--red); font-size:1.4rem; font-weight:850; font-style:italic; }
+    .complex-layout { display:grid; grid-template-columns:360px minmax(0,1fr); gap:60px; align-items:center; margin-top:32px; }
+    .big-watch-wrap { position:relative; display:grid; place-items:center; padding:55px 20px; }
+    .big-strap { position:absolute; left:50%; width:112px; transform:translateX(-50%); background:linear-gradient(90deg,#242426,#555358 50%,#242426); border:1px solid #646166; }
+    .big-strap.top { top:0; height:88px; border-radius:28px 28px 7px 7px; }
+    .big-strap.bottom { bottom:0; height:94px; border-radius:7px 7px 30px 30px; }
+    .big-watch { z-index:1; width:246px; height:298px; padding:10px; border:10px solid #3c3d40; border-radius:66px; background:#050607; box-shadow:0 28px 52px rgba(49,38,31,.27); }
+    .big-screen { height:100%; padding:16px; border-radius:49px; color:#f7f7f7; background:radial-gradient(circle at 50% 0%,#202226,#07080a 62%); display:flex; flex-direction:column; }
+    .big-screen h3 { margin:8px 0 5px; font-size:1.05rem; }
+    .big-screen .result { padding:9px; font-size:.56rem; }
+    .findings { display:grid; gap:5px; margin:4px 0 8px; color:#b8babe; font-size:.52rem; }
+    .findings span::before { content:""; display:inline-block; width:5px; height:5px; margin-right:6px; border-radius:50%; background:#ff684d; }
+    .levels { display:grid; gap:0; }
+    .level { display:grid; grid-template-columns:96px 1fr auto; gap:22px; align-items:start; padding:22px 0; border-bottom:1px solid #d2c7bf; }
+    .level:first-child { border-top:1px solid #d2c7bf; }
+    .level-number { color:#d2c8c0; font-size:3.5rem; font-weight:650; line-height:.85; }
+    .level h3 { margin:0 0 5px; font-size:1.2rem; }
+    .level p { margin:0; max-width:700px; color:#5f5a55; font-size:.74rem; line-height:1.5; }
+    .level-tag { padding:6px 9px; border:1px solid #c8bbb2; border-radius:999px; color:var(--red); font-size:.58rem; white-space:nowrap; }
+    .approval { margin-top:20px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:20px; background:var(--red); color:#fff; }
+    .approval strong { display:block; font-size:.82rem; }
+    .approval p { margin:3px 0 0; max-width:700px; font-size:.66rem; line-height:1.45; opacity:.84; }
+    .approval button { border:1px solid rgba(255,255,255,.75); border-radius:999px; padding:8px 11px; background:transparent; color:#fff; font-size:.62rem; font-weight:800; cursor:pointer; }
+    footer { display:flex; justify-content:space-between; gap:20px; padding:18px 0 32px; border-top:1px solid #bfb3ab; color:var(--muted); font-size:.68rem; }
+    .toast { position:fixed; right:24px; bottom:24px; width:min(350px,calc(100% - 32px)); padding:13px 15px; color:#fff; background:#272522; border-radius:13px; box-shadow:0 18px 46px rgba(0,0,0,.24); transform:translateY(24px); opacity:0; pointer-events:none; transition:.22s; z-index:30; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast strong { display:block; font-size:.8rem; } .toast span { display:block; margin-top:2px; color:#c9c4bf; font-size:.7rem; }
+    @media(max-width:1120px){ .chapters{grid-template-columns:repeat(2,1fr)}.complex-layout{grid-template-columns:300px 1fr;gap:30px}.chapter-body{grid-template-columns:180px 1fr} }
+    @media(max-width:760px){ .page{width:calc(100% - 24px)}.intro{grid-template-columns:1fr;gap:26px;padding-top:32px}.intro-side{justify-self:start}.wordmark,.intro-side p{text-align:left}.section-head{align-items:flex-start;flex-direction:column}.section-head p{text-align:left}.chapters{grid-template-columns:1fr}.complex-title{grid-template-columns:1fr}.complex-layout{grid-template-columns:1fr}.level{grid-template-columns:72px 1fr}.level-tag{grid-column:2;justify-self:start}.approval{align-items:flex-start;flex-direction:column}.nav a:first-child{display:none} }
+    @media(max-width:460px){ .chapter{padding:20px}.chapter-body{grid-template-columns:1fr}.meaning{padding:0}.topbar{padding-inline:14px}.big-watch-wrap{transform:scale(.9);margin:-15px 0}.rule{font-size:1rem} }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="index.html"><span class="brand-mark">✓</span><span><strong>DoneSure</strong><small>Apple Watch Journey</small></span></a>
-    <div class="top-actions"><span class="connection"><span class="dot"></span>Watch ↔ iPhone ↔ Mac connected</span><a class="back" href="index.html">← Task monitor</a></div>
-  </header>
+  <header class="topbar"><a class="brand" href="index.html"><span class="mark">✓</span><span><strong>DoneSure</strong><small>Apple Watch Journey</small></span></a><nav class="nav"><a href="#complex-reply">Complex replies</a><a class="primary" href="monitor.html">Task monitor</a></nav></header>
+  <main class="page">
+    <section class="intro"><div><div class="eyebrow">A wrist-first workflow for Codex</div><h1>Six moments.<br>One continuous task.</h1><p>DoneSure turns a finished Codex run into a clear decision: verify the result, understand what changed, ask by voice, and continue the same task without returning to your desk.</p></div><div class="intro-side"><div class="wordmark">DoneSure</div><p>Designed for long-running work where completion, context, and the next decision matter more than another dashboard.</p></div></section>
 
-  <section class="hero">
-    <div><div class="eyebrow">How the prototype works</div><h1>Six moments. One continuous Codex task.</h1><p>Start with a verified completion alert, ask a question by voice, give Codex a new command, and receive the result—without breaking context or returning to your Mac.</p></div>
-    <div class="promise"><span>Verified results</span><span>Voice first</span><span>Same task context</span><a href="#complex-reply">Complex replies ↓</a></div>
-  </section>
-
-  <main class="journey">
-    <div class="journey-head"><strong>Apple Watch interaction journey</strong><span>Click any watch action to simulate the next moment</span></div>
-    <section class="steps" aria-label="Six-step Apple Watch interaction journey">
-      <article class="step" data-step="1">
-        <div class="step-heading"><span class="number">1</span><span><strong>Receive completion</strong><small>Haptic alert + verified evidence</small></span></div>
-        <div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen">
-          <div class="time"><span>9:41</span><span>●</span></div><span class="app">✓ DoneSure</span><h2>Task complete</h2><div class="task">Refactor payment module</div>
-          <div class="metrics"><div class="metric"><span>Tests</span><strong>68 / 68</strong></div><div class="metric"><span>Runtime</span><strong>21 min</strong></div></div><p class="copy">Checkout logic refactored. No blockers.</p>
-          <div class="actions"><button class="watch-button primary jump" data-target="3">Ask Codex</button><button class="watch-button jump" data-target="2">View summary</button></div>
-        </div></div></div>
-        <div class="why"><span>User understands</span><p>The right task finished, the result is verified, and it is safe to continue.</p></div>
-      </article>
-
-      <article class="step" data-step="2">
-        <div class="step-heading"><span class="number">2</span><span><strong>Review the result</strong><small>Changes, tests, and risk at a glance</small></span></div>
-        <div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen">
-          <div class="time"><span>9:41</span><span>●</span></div><span class="app">Verified complete</span><h2>What changed</h2><div class="result"><strong>Result summary</strong>8 files changed<br>14 tests added<br>68/68 tests passed<br>No blockers</div>
-          <div class="actions"><button class="watch-button primary jump" data-target="3">Ask a question</button><button class="watch-button handoff">Open on iPhone</button></div>
-        </div></div></div>
-        <div class="why"><span>User decides</span><p>Accept the outcome, inspect deeper on iPhone, or ask Codex a follow-up.</p></div>
-      </article>
-
-      <article class="step" data-step="3">
-        <div class="step-heading"><span class="number">3</span><span><strong>Ask by voice</strong><small>Tap, speak, and stay hands-free</small></span></div>
-        <div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen voice-screen">
-          <div class="time"><span>9:42</span><span>●</span></div><span class="app">Ask Codex</span><div class="voice-orb">🎙</div><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="spoken">Tap to say “What changed?”</div><div class="voice-status">Voice reply · English</div>
-          <div class="actions"><button class="watch-button primary mic">Start listening</button><button class="watch-button jump" data-target="4">Use sample question</button></div>
-        </div></div></div>
-        <div class="why"><span>System routes</span><p>iPhone transcribes the voice message and DoneSure adds the task context.</p></div>
-      </article>
-
-      <article class="step" data-step="4">
-        <div class="step-heading"><span class="number">4</span><span><strong>Understand the reply</strong><small>Conclusion first, detail on demand</small></span></div>
-        <div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen">
-          <div class="time"><span>9:42</span><span>●</span></div><span class="app">Codex replied</span><h2>Refactor complete</h2><div class="result"><strong>Quick answer</strong>All tests pass, but two compatibility risks need review.<div class="risk-line"><b>2 warnings</b><span>Details →</span></div></div>
-          <div class="actions"><button class="watch-button primary complex-jump">Explain risks</button><button class="watch-button handoff">Open full reply</button></div>
-        </div></div></div>
-        <div class="why"><span>User gets clarity</span><p>Lead with the conclusion, expose risks, and move long details to a larger screen.</p></div>
-      </article>
-
-      <article class="step" data-step="5">
-        <div class="step-heading"><span class="number">5</span><span><strong>Give the next command</strong><small>Continue the same task by voice</small></span></div>
-        <div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen listening">
-          <div class="time"><span>9:43</span><span>●</span></div><span class="app">Ask Codex</span><div class="voice-orb">🎙</div><div class="spoken">“Create a pull request and send me the link.”</div><div class="voice-status">Ready for the existing thread</div>
-          <div class="actions"><button class="watch-button primary jump" data-target="6">Send command</button><button class="watch-button done">Cancel</button></div>
-        </div></div></div>
-        <div class="why"><span>Context continues</span><p>The instruction enters the same Codex thread with its files and decisions.</p></div>
-      </article>
-
-      <article class="step" data-step="6">
-        <div class="step-heading"><span class="number">6</span><span><strong>Confirm the action</strong><small>PR ready + optional handoff</small></span></div>
-        <div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen">
-          <div class="time"><span>9:45</span><span>●</span></div><span class="app">✓ Action complete</span><h2>Pull request created</h2><div class="task">PR #284</div><div class="result"><strong>Codex</strong>Created from codex/payment-refactor and ready for review.</div>
-          <div class="actions"><button class="watch-button primary handoff">Open on iPhone</button><button class="watch-button jump" data-target="1">Start over</button></div>
-        </div></div></div>
-        <div class="why"><span>Loop closes</span><p>The result returns to the wrist, with a larger-screen handoff only if needed.</p></div>
-      </article>
+    <section aria-labelledby="journey-title"><div class="section-head"><div><div class="eyebrow">01—06 · How it works</div><h2 id="journey-title">The Apple Watch interaction journey</h2></div><p>Each moment answers one question. What finished? Is it safe? What changed? What should happen next?</p></div>
+      <div class="chapters">
+        <article class="chapter" data-step="1"><div class="chapter-head"><span class="chapter-number">01</span><div><h3>Receive completion</h3><p>Haptic alert with verified evidence—not just “the process stopped.”</p></div></div><div class="chapter-body"><div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen"><div class="time"><span>9:41</span><span>●</span></div><span class="app">✓ DoneSure</span><h4>Task complete</h4><div class="task">Refactor payment module</div><div class="metrics"><div class="metric"><span>Tests</span><strong>68 / 68</strong></div><div class="metric"><span>Runtime</span><strong>21 min</strong></div></div><p class="copy">No blockers detected.</p><div class="actions"><button class="watch-button primary jump" data-target="3">Ask Codex</button><button class="watch-button jump" data-target="2">View summary</button></div></div></div></div><div class="meaning"><span>User understands</span><p>The right task finished and the outcome has been checked.</p></div></div></article>
+        <article class="chapter" data-step="2"><div class="chapter-head"><span class="chapter-number">02</span><div><h3>Review the result</h3><p>Changes, tests, and blockers summarized for a quick decision.</p></div></div><div class="chapter-body"><div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen"><div class="time"><span>9:41</span><span>●</span></div><span class="app">Verified complete</span><h4>What changed</h4><div class="result"><strong>Result summary</strong>8 files changed<br>14 tests added<br>68/68 tests passed<br>No blockers</div><div class="actions"><button class="watch-button primary jump" data-target="3">Ask a question</button><button class="watch-button handoff">Open on iPhone</button></div></div></div></div><div class="meaning"><span>User decides</span><p>Accept it, ask a follow-up, or move to a larger screen.</p></div></div></article>
+        <article class="chapter" data-step="3"><div class="chapter-head"><span class="chapter-number">03</span><div><h3>Ask by voice</h3><p>Tap, speak naturally, and stay inside the current task.</p></div></div><div class="chapter-body"><div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen voice-screen"><div class="time"><span>9:42</span><span>●</span></div><span class="app">Ask Codex</span><div class="voice">🎙</div><div class="spoken">Tap to say “What changed?”</div><div class="voice-state">Voice reply · English</div><div class="actions"><button class="watch-button primary mic">Start listening</button><button class="watch-button jump" data-target="4">Use sample question</button></div></div></div></div><div class="meaning"><span>System routes</span><p>iPhone transcribes; DoneSure adds the exact task context.</p></div></div></article>
+        <article class="chapter" data-step="4"><div class="chapter-head"><span class="chapter-number">04</span><div><h3>Understand the reply</h3><p>Conclusion first, risks second, deeper detail only on demand.</p></div></div><div class="chapter-body"><div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen"><div class="time"><span>9:42</span><span>●</span></div><span class="app">Codex replied</span><h4>Refactor complete</h4><div class="result"><strong>Quick answer</strong>All tests pass, but two compatibility risks need review.<div class="risk"><b>2 warnings</b><span>Details →</span></div></div><div class="actions"><button class="watch-button primary complex-jump">Explain risks</button><button class="watch-button handoff">Open full reply</button></div></div></div></div><div class="meaning"><span>User gets clarity</span><p>The watch supports understanding and deciding—not reading a wall of text.</p></div></div></article>
+        <article class="chapter" data-step="5"><div class="chapter-head"><span class="chapter-number">05</span><div><h3>Give the next command</h3><p>Continue the same Codex task with another voice instruction.</p></div></div><div class="chapter-body"><div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen"><div class="time"><span>9:43</span><span>●</span></div><span class="app">Ask Codex</span><div class="voice">🎙</div><div class="spoken">“Create a pull request and send me the link.”</div><div class="voice-state">Existing thread ready</div><div class="actions"><button class="watch-button primary jump" data-target="6">Send command</button><button class="watch-button close">Cancel</button></div></div></div></div><div class="meaning"><span>Context continues</span><p>Files, decisions, and prior messages stay attached.</p></div></div></article>
+        <article class="chapter" data-step="6"><div class="chapter-head"><span class="chapter-number">06</span><div><h3>Confirm the action</h3><p>The result returns to your wrist, with handoff only when useful.</p></div></div><div class="chapter-body"><div class="watch-wrap"><div class="strap top"></div><div class="strap bottom"></div><div class="watch"><div class="screen"><div class="time"><span>9:45</span><span>●</span></div><span class="app">✓ Action complete</span><h4>Pull request created</h4><div class="task">PR #284</div><div class="result"><strong>Codex</strong>Created from codex/payment-refactor and ready for review.</div><div class="actions"><button class="watch-button primary handoff">Open on iPhone</button><button class="watch-button jump" data-target="1">Start over</button></div></div></div></div><div class="meaning"><span>Loop closes</span><p>The next result is confirmed without losing momentum.</p></div></div></article>
+      </div>
     </section>
 
-    <div class="system-flow" aria-label="Voice message routing"><span class="flow-label">Behind every voice action</span><span class="node">Apple Watch captures voice</span><span class="arrow">→</span><span class="node">iPhone transcribes</span><span class="arrow">→</span><span class="node">DoneSure adds context</span><span class="arrow">→</span><span class="node">Codex runs on Mac</span><span class="arrow">→</span><span class="node">Watch receives reply</span></div>
+    <section class="complex" id="complex-reply" aria-labelledby="complex-title"><div class="complex-title"><div><div class="eyebrow">When Codex has more to say</div><h2 id="complex-title">Complex answers unfold in layers.</h2><p>The watch shows the conclusion, exceptions, and next decision. Voice handles clarification. iPhone or Mac carries the full explanation, code diff, logs, and approval controls.</p></div><div class="rule">Understand → decide → inspect</div></div>
+      <div class="complex-layout"><div class="big-watch-wrap"><div class="big-strap top"></div><div class="big-strap bottom"></div><div class="big-watch"><div class="big-screen"><div class="time"><span>9:42</span><span>●</span></div><span class="app">Codex · Detailed reply</span><h3>Refactor complete</h3><div class="result"><strong>Quick answer</strong>All 68 tests pass, but two compatibility risks need review.</div><div class="findings"><span>Legacy Safari checkout</span><span>Older payment adapter</span></div><div class="actions"><button class="watch-button primary explain">Why is this risky?</button><button class="watch-button handoff">Open full reply</button></div></div></div></div>
+        <div><div class="levels"><article class="level"><span class="level-number">01</span><div><h3>Glance on Apple Watch</h3><p>One-sentence conclusion, up to three key findings, risk level, and the next available actions.</p></div><span class="level-tag">5–10 seconds</span></article><article class="level"><span class="level-number">02</span><div><h3>Clarify by voice</h3><p>Ask “Why is this risky?” or “What should I do next?” and receive a concise spoken answer.</p></div><span class="level-tag">Hands-free</span></article><article class="level"><span class="level-number">03</span><div><h3>Inspect on iPhone or Mac</h3><p>Open the complete explanation, code references, test output, logs, and recommended changes in the same Codex task.</p></div><span class="level-tag">Full context</span></article></div><div class="approval"><div><strong>High-impact actions require approval</strong><p>Deleting files, merging a PR, or publishing a release always moves to iPhone or Mac for review.</p></div><button class="review">Review on iPhone</button></div></div>
+      </div>
+    </section>
+    <footer><span>DoneSure · Codex Task Companion</span><span>Verified results · Voice-first control · Same-task context</span></footer>
   </main>
-
-  <section class="complex-panel" id="complex-reply" aria-labelledby="complex-title">
-    <div class="complex-header">
-      <div><div class="eyebrow">When Codex has more to say</div><h2 id="complex-title">Complex answers unfold in layers—not in tiny text.</h2><p>The watch provides enough information to understand the outcome and choose the next action. Explanation, evidence, and full technical output appear only when the user asks for them.</p></div>
-      <div class="principle">Watch = understand + decide<br>iPhone / Mac = inspect + act</div>
-    </div>
-
-    <div class="complex-grid">
-      <article class="scenario">
-        <span class="scenario-label">Example scenario</span>
-        <h3>A successful refactor with two compatibility risks</h3>
-        <p>Codex returns a long explanation, several code references, test output, and a recommended migration plan.</p>
-        <div class="scenario-facts">
-          <div class="scenario-fact"><span>1</span><div><strong>Lead with the conclusion</strong><small>“Refactor complete. All 68 tests pass.”</small></div></div>
-          <div class="scenario-fact"><span>2</span><div><strong>Surface exceptions</strong><small>Show two warnings instead of the entire analysis.</small></div></div>
-          <div class="scenario-fact"><span>3</span><div><strong>Offer the next decision</strong><small>Explain by voice or hand off the full reply.</small></div></div>
-        </div>
-      </article>
-
-      <article class="device-showcase" aria-label="Complex Codex reply on Apple Watch">
-        <div class="large-watch-wrap"><div class="large-strap top"></div><div class="large-strap bottom"></div><div class="large-watch"><div class="large-screen">
-          <div class="time"><span>9:42</span><span>●</span></div><span class="app">Codex · Detailed reply</span><h3>Refactor complete</h3>
-          <div class="summary-box"><span>Quick answer</span><p>All 68 tests pass, but two compatibility risks need review.</p></div>
-          <div class="finding-list"><div class="finding">Legacy Safari checkout</div><div class="finding">Older payment adapter</div></div>
-          <div class="actions"><button class="watch-button primary explain-button">Why is this risky?</button><button class="watch-button handoff">Open full reply</button></div>
-        </div></div></div>
-      </article>
-
-      <article class="layers">
-        <div class="layers-title"><strong>Progressive disclosure</strong><span>Right detail, right device</span></div>
-        <div class="layer-list">
-          <div class="layer"><span class="layer-number">01</span><div><strong>Glance on Apple Watch</strong><p>One-sentence conclusion, up to three findings, risk level, and clear next actions.</p></div><span class="layer-tag">5–10 seconds</span></div>
-          <div class="layer"><span class="layer-number">02</span><div><strong>Clarify by voice</strong><p>Ask “Why is this risky?” or “What should I do next?” and receive a concise spoken answer.</p></div><span class="layer-tag">Hands-free</span></div>
-          <div class="layer"><span class="layer-number">03</span><div><strong>Inspect on iPhone or Mac</strong><p>Open the full explanation, code diff, logs, citations, and all recommended changes in the same Codex task.</p></div><span class="layer-tag">Full context</span></div>
-        </div>
-        <div class="approval"><div><strong>Approval required for high-impact actions</strong><p>Deleting files, merging a PR, or publishing a release always moves to iPhone or Mac for review.</p></div><button class="approval-button">Review on iPhone</button></div>
-      </article>
-    </div>
-  </section>
-
   <div class="toast" id="toast" role="status"><strong id="toastTitle"></strong><span id="toastBody"></span></div>
   <script>
-    const toast = document.getElementById('toast');
-    const toastTitle = document.getElementById('toastTitle');
-    const toastBody = document.getElementById('toastBody');
-    let toastTimer;
-    function showToast(title, body) {
-      clearTimeout(toastTimer); toastTitle.textContent = title; toastBody.textContent = body; toast.classList.add('show');
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
-    }
-    function activate(number) {
-      document.querySelectorAll('.step').forEach(step => step.classList.toggle('active', step.dataset.step === String(number)));
-      setTimeout(() => document.querySelector(`[data-step="${number}"]`)?.classList.remove('active'), 1800);
-    }
-    document.querySelectorAll('.jump').forEach(button => button.addEventListener('click', () => {
-      const target = Number(button.dataset.target); activate(target);
-      const messages = {1:['Journey restarted','The verified completion alert is ready.'],2:['Summary opened','Review evidence and blockers at a glance.'],3:['Voice reply ready','Tap the microphone and speak naturally.'],4:['Codex replied','The concise answer arrived with a haptic tap.'],5:['Follow-up ready','Continue in the same Codex task.'],6:['Action complete','PR #284 is ready for review.']};
-      showToast(...messages[target]);
-    }));
-    document.querySelector('.mic').addEventListener('click', event => {
-      const screen = event.currentTarget.closest('.screen');
-      const listening = screen.classList.toggle('listening');
-      screen.querySelector('.spoken').textContent = listening ? '“What changed?”' : 'Tap to say “What changed?”';
-      screen.querySelector('.voice-status').textContent = listening ? 'Transcribing on iPhone…' : 'Voice reply · English';
-      event.currentTarget.textContent = listening ? 'Send to Codex' : 'Start listening';
-      if (listening) showToast('Listening on Apple Watch','Say “What changed?” naturally.');
-      else { activate(4); showToast('Voice message sent','Codex received the transcript in the existing task.'); }
-    });
-    document.querySelectorAll('.handoff').forEach(button => button.addEventListener('click', () => showToast('Handing off to iPhone','The full task opens with the same conversation context.')));
-    document.querySelectorAll('.done').forEach(button => button.addEventListener('click', () => showToast('Action closed','The Codex task remains available in DoneSure history.')));
-    document.querySelector('.complex-jump').addEventListener('click', () => {
-      document.getElementById('complex-reply').scrollIntoView({behavior:'smooth', block:'start'});
-      showToast('Complex reply expanded','The conclusion stays on your wrist; details unfold only when requested.');
-    });
-    document.querySelector('.explain-button').addEventListener('click', () => showToast('Voice explanation ready','Codex: “These integrations rely on APIs that changed in the refactor.”'));
-    document.querySelector('.approval-button').addEventListener('click', () => showToast('Review opened on iPhone','The same Codex task opens with risks, diff, and approval controls.'));
+    const toast=document.getElementById('toast'),toastTitle=document.getElementById('toastTitle'),toastBody=document.getElementById('toastBody');let timer;
+    function say(title,body){clearTimeout(timer);toastTitle.textContent=title;toastBody.textContent=body;toast.classList.add('show');timer=setTimeout(()=>toast.classList.remove('show'),2800)}
+    function activate(n){document.querySelectorAll('.chapter').forEach(c=>c.style.background=c.dataset.step===String(n)?'#fff5ec':'');setTimeout(()=>document.querySelector(`[data-step="${n}"]`)?.style.removeProperty('background'),1600)}
+    document.querySelectorAll('.jump').forEach(b=>b.addEventListener('click',()=>{const n=Number(b.dataset.target);activate(n);say('Step '+n+' ready','The next Watch moment is highlighted without leaving the page.')}));
+    document.querySelector('.mic').addEventListener('click',e=>{const s=e.currentTarget.closest('.screen'),on=s.classList.toggle('listening');s.querySelector('.spoken').textContent=on?'“What changed?”':'Tap to say “What changed?”';s.querySelector('.voice-state').textContent=on?'Transcribing on iPhone…':'Voice reply · English';e.currentTarget.textContent=on?'Send to Codex':'Start listening';say(on?'Listening on Apple Watch':'Voice message sent',on?'Speak naturally.':'Codex received the transcript in the current task.');if(!on)activate(4)});
+    document.querySelector('.complex-jump').addEventListener('click',()=>{document.getElementById('complex-reply').scrollIntoView({behavior:'smooth'});say('Complex reply expanded','The conclusion stays on Watch; details unfold only when requested.')});
+    document.querySelector('.explain').addEventListener('click',()=>say('Voice explanation ready','These integrations rely on APIs changed by the refactor.'));
+    document.querySelectorAll('.handoff').forEach(b=>b.addEventListener('click',()=>say('Opening on iPhone','The same Codex task opens with full context.')));
+    document.querySelector('.review').addEventListener('click',()=>say('Approval moved to iPhone','Review the diff and approve the high-impact action there.'));
+    document.querySelectorAll('.close').forEach(b=>b.addEventListener('click',()=>say('Action closed','The task remains available in DoneSure history.')));
   </script>
 </body>
 </html>
