@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DoneSure：为 Codex 长程任务提供可靠、可确认的手机与 Apple Watch 状态提醒。">
+  <title>DoneSure · Codex Task Monitor</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b0d10'/%3E%3Cpath d='M17 34l9 9 21-23' fill='none' stroke='%23d8ff43' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080a0d;
+      --panel: #111419;
+      --panel-2: #171b21;
+      --line: #2b3139;
+      --muted: #8f9aa7;
+      --text: #f6f7f8;
+      --accent: #d8ff43;
+      --accent-ink: #111500;
+      --blue: #6aa8ff;
+      --orange: #ffb454;
+      --red: #ff6b6b;
+      --green: #58db87;
+      --radius: 20px;
+      --shadow: 0 24px 70px rgba(0, 0, 0, .36);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 85% 10%, rgba(216,255,67,.08), transparent 26rem),
+        linear-gradient(180deg, #0a0c10 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+
+    .app-shell {
+      width: min(1480px, calc(100% - 32px));
+      margin: 16px auto;
+      min-height: calc(100vh - 32px);
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+      background: rgba(10, 12, 16, .88);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+    }
+
+    .sidebar {
+      padding: 24px 18px;
+      background: #0c0f13;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 7px; }
+    .brand-mark {
+      width: 36px; height: 36px; border-radius: 11px;
+      display: grid; place-items: center;
+      background: var(--accent); color: var(--accent-ink);
+      font-weight: 900; font-size: 21px;
+      box-shadow: 0 0 26px rgba(216,255,67,.22);
+    }
+    .brand strong { display: block; font-size: 1.05rem; letter-spacing: -.02em; }
+    .brand small { color: var(--muted); display: block; font-size: .75rem; }
+
+    .nav-label { color: #67717d; font-size: .72rem; text-transform: uppercase; letter-spacing: .16em; padding: 0 10px; margin-bottom: 7px; }
+    .nav { display: grid; gap: 4px; }
+    .nav button {
+      width: 100%; border: 0; background: transparent; text-align: left;
+      padding: 11px 12px; border-radius: 11px; cursor: pointer;
+      color: #aab2bc; display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav button:hover, .nav button.active { background: #181d23; color: #fff; }
+    .nav button.active::before { content: ""; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; margin-right: 9px; }
+    .nav button span:first-of-type { flex: 1; }
+    .nav .count { font-size: .74rem; color: #7d8792; border: 1px solid #333a43; border-radius: 999px; padding: 1px 7px; }
+
+    .watch-card {
+      margin-top: auto; background: linear-gradient(145deg, #181d22, #111418);
+      border: 1px solid var(--line); border-radius: 16px; padding: 14px;
+    }
+    .watch-card .row { display: flex; gap: 9px; align-items: center; }
+    .watch-card p { color: var(--muted); font-size: .78rem; margin: 9px 0 12px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 5px rgba(88,219,135,.1); }
+    .text-btn { width: 100%; border: 1px solid #39414a; background: #0f1216; border-radius: 10px; padding: 8px 10px; cursor: pointer; font-size: .82rem; }
+    .text-btn:hover { border-color: var(--accent); }
+
+    main { min-width: 0; }
+    .topbar {
+      height: 78px; padding: 0 28px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--line); background: rgba(12,15,19,.82); position: sticky; top: 0; z-index: 20;
+      backdrop-filter: blur(16px);
+    }
+    .eyebrow { color: var(--muted); font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { font-size: 1.22rem; margin: 2px 0 0; letter-spacing: -.02em; }
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+    .connection { display: flex; align-items: center; gap: 8px; color: #b7c0ca; font-size: .82rem; padding-right: 6px; }
+
+    .btn {
+      border: 1px solid #3a424b; background: #15191e; border-radius: 12px;
+      padding: 10px 14px; cursor: pointer; font-weight: 700; font-size: .86rem;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: #68737e; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .btn.primary:hover { background: #e4ff75; }
+    .btn.warn { border-color: rgba(255,180,84,.46); color: #ffd29a; background: rgba(255,180,84,.08); }
+    .btn:focus-visible, .task:focus-visible, .switch:focus-visible { outline: 3px solid rgba(106,168,255,.6); outline-offset: 2px; }
+
+    .workspace { padding: 24px; display: grid; grid-template-columns: minmax(260px, .82fr) minmax(460px, 1.55fr) minmax(260px, .8fr); gap: 18px; }
+    .panel { border: 1px solid var(--line); background: rgba(17,20,25,.92); border-radius: var(--radius); min-width: 0; overflow: hidden; }
+    .panel-head { padding: 18px 18px 13px; display: flex; align-items: center; justify-content: space-between; }
+    .panel-head h2 { font-size: .9rem; margin: 0; letter-spacing: .01em; }
+    .panel-head small { color: var(--muted); }
+
+    .task-list { display: grid; padding: 0 10px 12px; gap: 7px; }
+    .task {
+      border: 1px solid transparent; background: transparent; border-radius: 14px;
+      padding: 13px; cursor: pointer; text-align: left; width: 100%;
+    }
+    .task:hover { background: #161a20; }
+    .task.active { background: #1b2026; border-color: #39414a; }
+    .task-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .task-title { font-weight: 760; line-height: 1.32; }
+    .task-meta { color: var(--muted); font-size: .75rem; margin-top: 7px; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 8px; font-size: .7rem; font-weight: 780; white-space: nowrap; }
+    .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .running { color: #bcd6ff; background: rgba(106,168,255,.12); }
+    .attention { color: #ffd29a; background: rgba(255,180,84,.12); }
+    .complete { color: #8ef0ae; background: rgba(88,219,135,.12); }
+    .failed { color: #ff9c9c; background: rgba(255,107,107,.12); }
+
+    .detail { padding-bottom: 18px; }
+    .detail-title { padding: 2px 22px 17px; border-bottom: 1px solid var(--line); }
+    .detail-title h2 { margin: 5px 0 4px; font-size: clamp(1.3rem, 2vw, 1.8rem); letter-spacing: -.035em; }
+    .detail-title p { margin: 0; color: var(--muted); font-size: .86rem; }
+    .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border-bottom: 1px solid var(--line); }
+    .metric { background: var(--panel); padding: 15px 18px; }
+    .metric span { display: block; color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .09em; }
+    .metric strong { display: block; font-size: 1rem; margin-top: 3px; }
+
+    .timeline-wrap { padding: 19px 21px 5px; }
+    .timeline-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .timeline-head strong { font-size: .86rem; }
+    .timeline-head span { color: var(--muted); font-size: .75rem; }
+    .timeline { display: grid; gap: 0; }
+    .event { display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; min-height: 61px; position: relative; }
+    .event::before { content: ""; position: absolute; left: 7px; top: 17px; bottom: -5px; width: 1px; background: #313841; }
+    .event:last-child::before { display: none; }
+    .event-dot { width: 15px; height: 15px; border-radius: 50%; margin-top: 2px; background: #2f363f; border: 4px solid #171b21; box-shadow: 0 0 0 1px #424b55; z-index: 1; }
+    .event.done .event-dot { background: var(--green); box-shadow: 0 0 0 1px var(--green); }
+    .event.current .event-dot { background: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 18px rgba(216,255,67,.35); }
+    .event strong { display: block; font-size: .82rem; line-height: 1.35; }
+    .event p { margin: 3px 0 0; color: var(--muted); font-size: .75rem; }
+    .event time { color: #6f7985; font-size: .7rem; }
+
+    .action-bar { margin: 9px 20px 0; padding: 15px; border: 1px solid #343c45; border-radius: 15px; background: #0d1014; }
+    .action-copy { display: flex; gap: 11px; margin-bottom: 13px; }
+    .action-icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: rgba(216,255,67,.12); color: var(--accent); font-weight: 900; }
+    .action-copy strong { display: block; font-size: .86rem; }
+    .action-copy p { margin: 2px 0 0; color: var(--muted); font-size: .76rem; }
+    .action-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .devices { padding-bottom: 16px; }
+    .device-stage { padding: 4px 14px 15px; display: grid; place-items: center; gap: 18px; }
+    .phone {
+      width: min(210px, 90%); aspect-ratio: 9 / 17.5; border: 7px solid #2d333b; border-radius: 34px; background: #080a0d;
+      box-shadow: inset 0 0 0 1px #070809, 0 22px 40px rgba(0,0,0,.38); padding: 14px 10px; position: relative;
+    }
+    .island { width: 66px; height: 18px; background: #000; border-radius: 999px; margin: -7px auto 17px; }
+    .phone-time { font-size: .68rem; font-weight: 800; padding: 0 4px 8px; }
+    .notification { background: rgba(42,47,54,.96); border: 1px solid #505964; border-radius: 17px; padding: 10px; box-shadow: 0 12px 30px rgba(0,0,0,.25); }
+    .notif-head { display: flex; justify-content: space-between; gap: 8px; color: #b7c0ca; font-size: .59rem; text-transform: uppercase; letter-spacing: .06em; }
+    .notif-title { font-weight: 800; font-size: .77rem; margin-top: 7px; }
+    .notif-body { color: #d6dbe0; font-size: .66rem; margin: 4px 0 9px; line-height: 1.4; }
+    .notif-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .notif-actions button { border: 0; border-radius: 8px; padding: 6px 4px; background: #343b44; font-size: .59rem; cursor: pointer; }
+    .notif-actions button:first-child { background: var(--accent); color: var(--accent-ink); font-weight: 800; }
+    .watch {
+      width: 126px; height: 142px; border: 8px solid #343a42; background: #050607; border-radius: 36px;
+      padding: 17px 12px; position: relative; box-shadow: 0 18px 36px rgba(0,0,0,.36);
+    }
+    .watch::after { content: ""; position: absolute; right: -13px; top: 39px; width: 5px; height: 24px; border-radius: 0 5px 5px 0; background: #555e68; }
+    .watch .tiny { color: var(--accent); font-size: .56rem; text-transform: uppercase; font-weight: 850; letter-spacing: .09em; }
+    .watch strong { display: block; font-size: .72rem; margin: 5px 0 4px; line-height: 1.25; }
+    .watch p { margin: 0; color: #aeb6bf; font-size: .56rem; line-height: 1.35; }
+    .watch button { width: 100%; border: 0; border-radius: 8px; margin-top: 10px; padding: 6px; background: var(--accent); color: var(--accent-ink); font-size: .56rem; font-weight: 900; cursor: pointer; }
+
+    .settings { margin: 0 14px; padding: 12px; border-radius: 14px; background: #0e1115; border: 1px solid #2e353d; }
+    .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; }
+    .setting-row + .setting-row { border-top: 1px solid #252b32; }
+    .setting-row label { font-size: .75rem; }
+    .setting-row small { display: block; color: var(--muted); font-size: .65rem; }
+    .switch { width: 36px; height: 21px; border-radius: 999px; border: 0; background: #3a424b; cursor: pointer; padding: 3px; }
+    .switch::after { content: ""; display: block; width: 15px; height: 15px; border-radius: 50%; background: #fff; transition: transform .2s; }
+    .switch.on { background: var(--accent); }
+    .switch.on::after { transform: translateX(15px); background: #111500; }
+
+    .prototype-note { grid-column: 1 / -1; border: 1px dashed #39414a; border-radius: 15px; padding: 12px 16px; color: #9ba5b0; font-size: .79rem; display: flex; justify-content: space-between; gap: 14px; align-items: center; }
+    .prototype-note a { color: var(--accent); text-underline-offset: 3px; }
+
+    .toast {
+      position: fixed; right: 26px; bottom: 26px; width: min(360px, calc(100% - 36px));
+      border: 1px solid #55606c; border-radius: 15px; background: #1a1f25; color: #fff;
+      padding: 14px 16px; box-shadow: 0 18px 50px rgba(0,0,0,.5); z-index: 50;
+      transform: translateY(25px); opacity: 0; pointer-events: none; transition: .24s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast strong { display: block; font-size: .87rem; }
+    .toast span { color: #aeb7c1; font-size: .76rem; }
+
+    @media (max-width: 1120px) {
+      .workspace { grid-template-columns: minmax(240px, .8fr) minmax(460px, 1.5fr); }
+      .devices { grid-column: 1 / -1; }
+      .device-stage { grid-template-columns: auto auto; align-items: center; }
+      .settings { margin: 0 18px; }
+    }
+
+    @media (max-width: 820px) {
+      .app-shell { width: 100%; margin: 0; min-height: 100vh; border: 0; border-radius: 0; grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .topbar { height: auto; min-height: 74px; padding: 13px 16px; gap: 12px; }
+      .connection { display: none; }
+      .workspace { padding: 14px; grid-template-columns: 1fr; }
+      .devices { grid-column: auto; }
+      .task-list { grid-template-columns: 1fr; }
+      .prototype-note { grid-column: auto; align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (max-width: 520px) {
+      .top-actions .btn:not(.primary) { display: none; }
+      .metric-row { grid-template-columns: 1fr 1fr; }
+      .metric:last-child { grid-column: 1 / -1; }
+      .device-stage { grid-template-columns: 1fr; }
+      .action-buttons .btn { flex: 1 1 100%; }
+      .phone { width: 220px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand">
+        <div class="brand-mark">✓</div>
+        <div><strong>DoneSure</strong><small>Codex Task Monitor</small></div>
+      </div>
+
+      <div>
+        <div class="nav-label">Workspace</div>
+        <nav class="nav">
+          <button class="active"><span>任务监控</span><span class="count">3</span></button>
+          <button><span>通知记录</span><span class="count">8</span></button>
+          <button><span>设备与渠道</span></button>
+          <button><span>规则设置</span></button>
+        </nav>
+      </div>
+
+      <div class="watch-card">
+        <div class="row"><span class="dot"></span><strong>Apple Watch 已连接</strong></div>
+        <p>上次同步：刚刚 · iPhone 镜像通知已开启</p>
+        <button class="text-btn" id="sidebarTest">发送测试通知</button>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">Live workspace · demo</div>
+          <h1>不必盯着 Codex，重要状态会来找你。</h1>
+        </div>
+        <div class="top-actions">
+          <div class="connection"><span class="dot"></span>Mac Studio · 在线</div>
+          <button class="btn" id="resetDemo">重置演示</button>
+          <button class="btn primary" id="nextEvent">模拟下一事件</button>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="DoneSure 任务监控原型">
+        <section class="panel" aria-label="任务列表">
+          <div class="panel-head"><h2>Codex 任务</h2><small id="taskCount">3 个任务</small></div>
+          <div class="task-list" id="taskList"></div>
+        </section>
+
+        <section class="panel detail" aria-live="polite">
+          <div class="detail-title">
+            <span class="badge running" id="detailBadge">运行中</span>
+            <h2 id="detailName">重构支付模块</h2>
+            <p id="detailPrompt">拆分结算逻辑，补充单元测试，并确保所有测试通过。</p>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><span>运行时长</span><strong id="duration">18m 42s</strong></div>
+            <div class="metric"><span>验证规则</span><strong id="rule">测试通过</strong></div>
+            <div class="metric"><span>通知策略</span><strong id="policy">需要操作时</strong></div>
+          </div>
+
+          <div class="timeline-wrap">
+            <div class="timeline-head"><strong>实时状态</strong><span id="lastUpdate">刚刚更新</span></div>
+            <div class="timeline" id="timeline"></div>
+          </div>
+
+          <div class="action-bar">
+            <div class="action-copy">
+              <div class="action-icon" id="actionIcon">↗</div>
+              <div><strong id="actionTitle">任务仍在执行</strong><p id="actionDescription">完成、失败或需要输入时，DoneSure 会立即提醒你。</p></div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn primary" id="mainAction">模拟需要输入</button>
+              <button class="btn" id="openCodex">在 Codex 中打开</button>
+              <button class="btn warn" id="retryAlert">重发提醒</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel devices" aria-label="通知预览">
+          <div class="panel-head"><h2>通知预览</h2><small>iPhone + Watch</small></div>
+          <div class="device-stage">
+            <div class="phone" aria-label="iPhone 通知预览">
+              <div class="island"></div>
+              <div class="phone-time">09:41</div>
+              <div class="notification">
+                <div class="notif-head"><span>DONESURE</span><span>现在</span></div>
+                <div class="notif-title" id="phoneTitle">Codex 正在工作</div>
+                <div class="notif-body" id="phoneBody">重构支付模块 · 已完成 2/4 个阶段。</div>
+                <div class="notif-actions">
+                  <button id="phoneAcknowledge">确认收到</button>
+                  <button id="phoneOpen">查看任务</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="watch" aria-label="Apple Watch 通知预览">
+              <div class="tiny" id="watchStatus">Running</div>
+              <strong id="watchTitle">重构支付模块</strong>
+              <p id="watchBody">Codex 正在执行测试。</p>
+              <button id="watchAcknowledge">确认收到</button>
+            </div>
+          </div>
+
+          <div class="settings">
+            <div class="setting-row"><label>iPhone 推送<small>任务完成、失败或等待输入</small></label><button class="switch on" aria-label="切换 iPhone 推送" aria-pressed="true"></button></div>
+            <div class="setting-row"><label>Apple Watch<small>镜像高优先级提醒</small></label><button class="switch on" aria-label="切换 Apple Watch 通知" aria-pressed="true"></button></div>
+            <div class="setting-row"><label>未确认则升级<small>5 分钟后再次提醒</small></label><button class="switch on" aria-label="切换重复提醒" aria-pressed="true"></button></div>
+          </div>
+        </section>
+
+        <div class="prototype-note">
+          <span><strong>原型提示：</strong>选择不同任务，或点击“模拟下一事件”体验运行中 → 等待输入 → 验证中 → 真正完成的状态变化。</span>
+          <span>结构参考：<a href="https://www.producthunt.com/products/relayd" target="_blank" rel="noreferrer">relayd</a> · <a href="https://www.producthunt.com/products/pushary" target="_blank" rel="noreferrer">Pushary</a></span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"><strong id="toastTitle"></strong><span id="toastBody"></span></div>
+
+  <script>
+    const tasks = [
+      {
+        id: 'payment', name: '重构支付模块', prompt: '拆分结算逻辑，补充单元测试，并确保所有测试通过。',
+        status: 'running', label: '运行中', duration: '18m 42s', rule: '测试通过', policy: '需要操作时', phase: 0,
+        events: [
+          ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
+          ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
+          ['current', '执行测试套件', '42/68 项测试通过', '现在'],
+          ['', '验证完成条件', '等待测试结束', '—']
+        ]
+      },
+      {
+        id: 'release', name: '发布 v2.4.0', prompt: '更新版本号、生成 changelog，并创建发布分支。',
+        status: 'attention', label: '需要输入', duration: '07m 16s', rule: '人工确认', policy: '立即提醒', phase: 1,
+        events: [
+          ['done', '检查发布内容', '发现 12 个待发布提交', '09:26'],
+          ['current', '请求发布权限', '需要确认推送 release/v2.4.0', '现在'],
+          ['', '创建发布分支', '等待用户批准', '—'],
+          ['', '生成发布摘要', '尚未开始', '—']
+        ]
+      },
+      {
+        id: 'bug', name: '修复登录回归', prompt: '复现移动端登录失败，修复后运行回归测试。',
+        status: 'complete', label: '已验证完成', duration: '31m 08s', rule: '回归测试', policy: '完成时提醒', phase: 3,
+        events: [
+          ['done', '复现登录错误', '定位为 token 刷新竞态', '08:51'],
+          ['done', '应用修复', '更新刷新锁与重试逻辑', '09:04'],
+          ['done', '运行回归测试', '126 项全部通过', '09:18'],
+          ['done', '验证完成条件', '任务结果已确认', '09:19']
+        ]
+      }
+    ];
+
+    const stages = [
+      { status: 'running', label: '运行中', badge: 'running', action: '模拟需要输入', icon: '↗', title: '任务仍在执行', desc: '完成、失败或需要输入时，DoneSure 会立即提醒你。', phoneTitle: 'Codex 正在工作', phoneBody: '重构支付模块 · 正在执行测试。', watchStatus: 'RUNNING', watchBody: 'Codex 正在执行测试。' },
+      { status: 'attention', label: '需要输入', badge: 'attention', action: '批准并继续', icon: '!', title: 'Codex 正在等待你的决定', desc: '批准测试环境的网络访问后，任务会继续。', phoneTitle: 'Codex 需要你的输入', phoneBody: '重构支付模块 · 请求访问测试数据库。', watchStatus: 'NEEDS INPUT', watchBody: '请求访问测试数据库。' },
+      { status: 'running', label: '验证中', badge: 'running', action: '完成验证', icon: '…', title: '正在确认任务是否真正完成', desc: 'DoneSure 正在检查测试结果，而不是把“停止”误判为“完成”。', phoneTitle: '正在验证完成条件', phoneBody: '重构支付模块 · 68 项测试已全部通过。', watchStatus: 'VERIFYING', watchBody: '正在核验测试结果。' },
+      { status: 'complete', label: '已验证完成', badge: 'complete', action: '再次运行演示', icon: '✓', title: '任务已真正完成', desc: '全部测试通过，结果已发送到 iPhone 和 Apple Watch。', phoneTitle: '任务已验证完成', phoneBody: '重构支付模块 · 68 项测试通过，用时 21 分钟。', watchStatus: 'COMPLETED', watchBody: '68 项测试全部通过。' }
+    ];
+
+    let selectedId = 'payment';
+    let toastTimer;
+
+    const $ = (id) => document.getElementById(id);
+
+    function activeTask() { return tasks.find(t => t.id === selectedId); }
+    function stageFor(task) {
+      if (task.id === 'payment') return stages[task.phase];
+      if (task.status === 'attention') return { ...stages[1], phoneBody: task.name + ' · 需要确认发布权限。', watchBody: '需要确认发布权限。' };
+      return { ...stages[3], phoneBody: task.name + ' · 回归测试全部通过。', watchBody: '回归测试全部通过。' };
+    }
+
+    function renderTasks() {
+      $('taskList').innerHTML = tasks.map(task => `
+        <button class="task ${task.id === selectedId ? 'active' : ''}" data-id="${task.id}">
+          <div class="task-top"><span class="task-title">${task.name}</span><span class="badge ${task.status}">${task.label}</span></div>
+          <div class="task-meta">${task.duration} · ${task.rule}</div>
+        </button>`).join('');
+      document.querySelectorAll('.task').forEach(btn => btn.addEventListener('click', () => { selectedId = btn.dataset.id; render(); }));
+    }
+
+    function renderTimeline(events) {
+      $('timeline').innerHTML = events.map(([state, title, desc, time]) => `
+        <div class="event ${state}"><span class="event-dot"></span><div><strong>${title}</strong><p>${desc}</p></div><time>${time}</time></div>`).join('');
+    }
+
+    function render() {
+      const task = activeTask();
+      const stage = stageFor(task);
+      renderTasks();
+      $('detailBadge').className = `badge ${stage.badge}`;
+      $('detailBadge').textContent = stage.label;
+      $('detailName').textContent = task.name;
+      $('detailPrompt').textContent = task.prompt;
+      $('duration').textContent = task.duration;
+      $('rule').textContent = task.rule;
+      $('policy').textContent = task.policy;
+      $('actionIcon').textContent = stage.icon;
+      $('actionTitle').textContent = stage.title;
+      $('actionDescription').textContent = stage.desc;
+      $('mainAction').textContent = stage.action;
+      $('phoneTitle').textContent = stage.phoneTitle;
+      $('phoneBody').textContent = stage.phoneBody;
+      $('watchStatus').textContent = stage.watchStatus;
+      $('watchTitle').textContent = task.name;
+      $('watchBody').textContent = stage.watchBody;
+      renderTimeline(task.events);
+    }
+
+    function showToast(title, body) {
+      clearTimeout(toastTimer);
+      $('toastTitle').textContent = title;
+      $('toastBody').textContent = body;
+      $('toast').classList.add('show');
+      toastTimer = setTimeout(() => $('toast').classList.remove('show'), 3200);
+    }
+
+    function updatePaymentPhase(nextPhase) {
+      const task = tasks[0];
+      task.phase = nextPhase;
+      const stage = stages[nextPhase];
+      task.status = stage.badge;
+      task.label = stage.label;
+      if (nextPhase === 1) {
+        task.duration = '19m 04s';
+        task.events = [
+          ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
+          ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
+          ['done', '执行测试套件', '需要连接测试数据库', '09:40'],
+          ['current', '等待权限确认', '请求访问测试数据库', '现在']
+        ];
+        showToast('需要你的输入', '“重构支付模块”正在等待数据库访问权限。');
+      } else if (nextPhase === 2) {
+        task.duration = '19m 38s';
+        task.events = [
+          ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
+          ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
+          ['done', '执行测试套件', '68 项测试全部通过', '09:41'],
+          ['current', '验证完成条件', '核对测试与任务要求', '现在']
+        ];
+        showToast('任务已继续', '权限已确认，DoneSure 正在核验完成条件。');
+      } else if (nextPhase === 3) {
+        task.duration = '21m 03s';
+        task.events = [
+          ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
+          ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
+          ['done', '执行测试套件', '68 项测试全部通过', '09:41'],
+          ['done', '验证完成条件', '任务结果已确认', '09:43']
+        ];
+        showToast('任务已验证完成', '68 项测试通过，完成提醒已发送到手机和手表。');
+      } else {
+        resetDemo(false);
+        showToast('演示已重新开始', 'Codex 正在执行“重构支付模块”。');
+      }
+      render();
+    }
+
+    function nextEvent() {
+      selectedId = 'payment';
+      const next = (tasks[0].phase + 1) % 4;
+      updatePaymentPhase(next);
+    }
+
+    function resetDemo(withToast = true) {
+      selectedId = 'payment';
+      const task = tasks[0];
+      task.phase = 0; task.status = 'running'; task.label = '运行中'; task.duration = '18m 42s';
+      task.events = [
+        ['done', '分析代码与依赖', '定位到 8 个相关文件', '09:22'],
+        ['done', '完成核心重构', '新的结算服务已写入', '09:31'],
+        ['current', '执行测试套件', '42/68 项测试通过', '现在'],
+        ['', '验证完成条件', '等待测试结束', '—']
+      ];
+      render();
+      if (withToast) showToast('演示已重置', '你可以重新体验完整通知流程。');
+    }
+
+    $('nextEvent').addEventListener('click', nextEvent);
+    $('mainAction').addEventListener('click', nextEvent);
+    $('resetDemo').addEventListener('click', () => resetDemo(true));
+    $('sidebarTest').addEventListener('click', () => showToast('测试通知已发送', '请查看右侧 iPhone 与 Apple Watch 预览。'));
+    $('retryAlert').addEventListener('click', () => showToast('提醒已重发', '高优先级通知已再次发送到两台设备。'));
+    $('openCodex').addEventListener('click', () => showToast('正在打开 Codex', '原型演示：真实产品会跳转到对应任务。'));
+    $('phoneOpen').addEventListener('click', () => showToast('任务详情', activeTask().name + ' 已在 DoneSure 中打开。'));
+    ['phoneAcknowledge', 'watchAcknowledge'].forEach(id => $(id).addEventListener('click', () => showToast('已确认收到', '升级提醒已停止，确认时间已写入通知记录。')));
+    document.querySelectorAll('.switch').forEach(sw => sw.addEventListener('click', () => {
+      sw.classList.toggle('on');
+      sw.setAttribute('aria-pressed', sw.classList.contains('on') ? 'true' : 'false');
+      showToast('通知设置已更新', sw.classList.contains('on') ? '该渠道已开启。' : '该渠道已暂停。');
+    }));
+
+    render();
+  </script>
+</body>
+</html>
