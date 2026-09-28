@@ -207,14 +207,15 @@
     .notif-actions button { border: 0; border-radius: 8px; padding: 6px 4px; background: #343b44; font-size: .59rem; cursor: pointer; }
     .notif-actions button:first-child { background: var(--accent); color: var(--accent-ink); font-weight: 800; }
     .watch {
-      width: 126px; height: 142px; border: 8px solid #343a42; background: #050607; border-radius: 36px;
-      padding: 17px 12px; position: relative; box-shadow: 0 18px 36px rgba(0,0,0,.36);
+      width: 138px; height: 166px; border: 8px solid #343a42; background: #050607; border-radius: 39px;
+      padding: 14px 11px 11px; position: relative; overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 18px 36px rgba(0,0,0,.36);
     }
-    .watch::after { content: ""; position: absolute; right: -13px; top: 39px; width: 5px; height: 24px; border-radius: 0 5px 5px 0; background: #555e68; }
-    .watch .tiny { color: var(--accent); font-size: .56rem; text-transform: uppercase; font-weight: 850; letter-spacing: .09em; }
-    .watch strong { display: block; font-size: .72rem; margin: 5px 0 4px; line-height: 1.25; }
-    .watch p { margin: 0; color: #aeb6bf; font-size: .56rem; line-height: 1.35; }
-    .watch button { width: 100%; border: 0; border-radius: 8px; margin-top: 10px; padding: 6px; background: var(--accent); color: var(--accent-ink); font-size: .56rem; font-weight: 900; cursor: pointer; }
+    .watch::after { content: ""; position: absolute; right: -13px; top: 45px; width: 5px; height: 24px; border-radius: 0 5px 5px 0; background: #555e68; }
+    .watch .tiny { color: var(--accent); font-size: .5rem; line-height: 1.2; text-transform: uppercase; font-weight: 850; letter-spacing: .08em; }
+    .watch strong { display: block; font-size: .68rem; margin: 5px 0 3px; line-height: 1.16; }
+    .watch p { margin: 0; color: #aeb6bf; font-size: .52rem; line-height: 1.28; }
+    .watch button { width: 100%; flex: 0 0 auto; border: 0; border-radius: 8px; margin-top: auto; padding: 6px 4px; background: var(--accent); color: var(--accent-ink); font-size: .53rem; font-weight: 850; cursor: pointer; }
 
     .settings { margin: 0 14px; padding: 12px; border-radius: 14px; background: #0e1115; border: 1px solid #2e353d; }
     .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; }
