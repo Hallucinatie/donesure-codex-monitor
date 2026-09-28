@@ -184,6 +184,19 @@
     .event p { margin: 3px 0 0; color: var(--muted); font-size: .75rem; }
     .event time { color: #6f7985; font-size: .7rem; }
 
+    .input-request { margin: 8px 20px 14px; padding: 16px; border: 1px solid rgba(255,159,10,.38); border-radius: 16px; background: rgba(255,159,10,.07); }
+    .input-request[hidden] { display: none; }
+    .request-head { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: start; }
+    .request-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; color: #ffd29a; background: rgba(255,159,10,.15); font-weight: 900; }
+    .request-eyebrow { color: #ffd29a; font-size: .66rem; font-weight: 780; letter-spacing: .08em; text-transform: uppercase; }
+    .request-head h3 { margin: 3px 0 3px; font-size: .98rem; line-height: 1.3; }
+    .request-head p { margin: 0; color: var(--muted); font-size: .76rem; }
+    .request-meta { display: grid; grid-template-columns: 1.25fr .75fr; gap: 8px; margin: 13px 0; }
+    .request-meta div { padding: 10px; border: 1px solid rgba(255,255,255,.08); border-radius: 11px; background: rgba(0,0,0,.16); }
+    .request-meta span { display: block; color: var(--muted); font-size: .62rem; text-transform: uppercase; letter-spacing: .07em; }
+    .request-meta strong { display: block; margin-top: 3px; font-size: .72rem; line-height: 1.4; }
+    .request-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
     .action-bar { margin: 9px 20px 0; padding: 15px; border: 1px solid #343c45; border-radius: 15px; background: #0d1014; }
     .action-copy { display: flex; gap: 11px; margin-bottom: 13px; }
     .action-icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: rgba(10,132,255,.14); color: var(--accent); font-weight: 900; }
@@ -357,6 +370,8 @@
       .overview-card strong { font-size: .96rem; }
       .device-stage { grid-template-columns: 1fr; }
       .action-buttons .btn { flex: 1 1 100%; }
+      .request-meta { grid-template-columns: 1fr; }
+      .request-actions .btn { flex: 1; }
       .phone { width: 220px; }
       .aw-strip { grid-template-columns: 1fr; }
       .aw-step::after { display: none !important; }
@@ -427,6 +442,22 @@
             <h2 id="detailName">Refactor payment module</h2>
             <p id="detailPrompt">Split checkout logic, add unit tests, and make sure every test passes.</p>
           </div>
+
+          <div class="input-request" id="inputRequest" hidden>
+            <div class="request-head">
+              <div class="request-icon">!</div>
+              <div><span class="request-eyebrow">Codex is asking for input</span><h3 id="requestTitle">Allow access to the test database?</h3><p id="requestReason">The test suite needs the staging database to finish verification.</p></div>
+            </div>
+            <div class="request-meta">
+              <div><span>Requested scope</span><strong id="requestScope">test-db.internal · read/write · 10 minutes</strong></div>
+              <div><span>Risk</span><strong id="requestRisk">Staging environment only</strong></div>
+            </div>
+            <div class="request-actions">
+              <button class="btn primary" id="approveInput">Approve once</button>
+              <button class="btn" id="denyInput">Deny</button>
+            </div>
+          </div>
+
           <div class="metric-row">
             <div class="metric"><span>Runtime</span><strong id="duration">18m 42s</strong></div>
             <div class="metric"><span>Completion rule</span><strong id="rule">Tests pass</strong></div>
@@ -621,10 +652,10 @@
     ];
 
     const stages = [
-      { status: 'running', label: 'Running', badge: 'running', action: 'Simulate input request', icon: '↗', title: 'Task still running', desc: 'DoneSure alerts you when it finishes, fails, or needs input.', phoneTitle: 'Codex is working', phoneBody: 'Refactor payment module · Running tests.', watchStatus: 'RUNNING', watchBody: 'Codex is running tests.' },
-      { status: 'attention', label: 'Needs input', badge: 'attention', action: 'Approve and continue', icon: '!', title: 'Codex is waiting for your decision', desc: 'Approve network access to the test environment to continue.', phoneTitle: 'Codex needs your input', phoneBody: 'Refactor payment module · Requests access to the test database.', watchStatus: 'NEEDS INPUT', watchBody: 'Test database access requested.' },
-      { status: 'running', label: 'Verifying', badge: 'running', action: 'Complete verification', icon: '…', title: 'Checking whether the task is truly complete', desc: 'DoneSure checks the test results instead of treating “stopped” as “done.”', phoneTitle: 'Verifying completion criteria', phoneBody: 'Refactor payment module · All 68 tests passed.', watchStatus: 'VERIFYING', watchBody: 'Checking test results.' },
-      { status: 'complete', label: 'Verified complete', badge: 'complete', action: 'Run demo again', icon: '✓', title: 'Task is truly complete', desc: 'All tests passed. The result was sent to your iPhone and Apple Watch.', phoneTitle: 'Task verified complete', phoneBody: 'Refactor payment module · 68 tests passed in 21 minutes.', watchStatus: 'COMPLETED', watchBody: 'All 68 tests passed.' }
+      { status: 'running', label: 'Running', badge: 'running', action: 'Simulate input request', icon: '↗', title: 'Task still running', desc: 'DoneSure alerts you when it finishes, fails, or needs input.', phoneTitle: 'Codex is working', phoneBody: 'Refactor payment module · Running tests.', phonePrimary: 'View status', phoneSecondary: 'Open task', watchStatus: 'RUNNING', watchBody: 'Codex is running tests.', watchAction: 'View status' },
+      { status: 'attention', label: 'Needs input', badge: 'attention', action: 'Approve and continue', icon: '!', title: 'Codex is waiting for your decision', desc: 'Review the requested permission, then approve once or deny it.', phoneTitle: 'Codex needs your input', phoneBody: 'Refactor payment module · Requests access to the test database.', phonePrimary: 'Approve once', phoneSecondary: 'Review request', watchStatus: 'NEEDS INPUT', watchBody: 'Test database access requested.', watchAction: 'Approve once' },
+      { status: 'running', label: 'Verifying', badge: 'running', action: 'Complete verification', icon: '…', title: 'Checking whether the task is truly complete', desc: 'DoneSure checks the test results instead of treating “stopped” as “done.”', phoneTitle: 'Verifying completion criteria', phoneBody: 'Refactor payment module · All 68 tests passed.', phonePrimary: 'View checks', phoneSecondary: 'Open task', watchStatus: 'VERIFYING', watchBody: 'Checking test results.', watchAction: 'View checks' },
+      { status: 'complete', label: 'Verified complete', badge: 'complete', action: 'Run demo again', icon: '✓', title: 'Task is truly complete', desc: 'All tests passed. The result was sent to your iPhone and Apple Watch.', phoneTitle: 'Task verified complete', phoneBody: 'Refactor payment module · 68 tests passed in 21 minutes.', phonePrimary: 'View result', phoneSecondary: 'Open task', watchStatus: 'COMPLETED', watchBody: 'All 68 tests passed.', watchAction: 'View result' }
     ];
 
     let selectedId = 'payment';
@@ -636,7 +667,23 @@
     function stageFor(task) {
       if (task.id === 'payment') return stages[task.phase];
       if (task.status === 'attention') return { ...stages[1], phoneBody: task.name + ' · Release permission required.', watchBody: 'Release permission required.' };
+      if (task.status === 'running') return { ...stages[0], action: 'Simulate completion', phoneBody: task.name + ' · Work resumed.', watchBody: 'Codex resumed the task.' };
       return { ...stages[3], phoneBody: task.name + ' · All regression tests passed.', watchBody: 'All regression tests passed.' };
+    }
+
+    function requestFor(task) {
+      if (task.id === 'release') return {
+        title: 'Approve pushing the release branch?',
+        reason: 'Codex prepared release/v2.4.0 and needs permission to push it to the remote repository.',
+        scope: 'Git remote · create one branch · one push',
+        risk: 'No production deployment'
+      };
+      return {
+        title: 'Allow access to the test database?',
+        reason: 'The test suite needs the staging database to finish verification.',
+        scope: 'test-db.internal · read/write · 10 minutes',
+        risk: 'Staging environment only'
+      };
     }
 
     function progressFor(task) {
@@ -646,7 +693,9 @@
         { value: 92, text: '68 tests passed · verifying completion' },
         { value: 100, text: 'Verified complete · alerts delivered' }
       ][task.phase];
-      if (task.id === 'release') return { value: 45, text: 'Approval required before creating the release branch' };
+      if (task.id === 'release') return task.status === 'attention'
+        ? { value: 45, text: 'Approval required before creating the release branch' }
+        : { value: 70, text: 'Permission approved · creating the release branch' };
       return { value: 100, text: '126 regression tests passed · outcome verified' };
     }
 
@@ -670,6 +719,8 @@
       const task = activeTask();
       const stage = stageFor(task);
       const progress = progressFor(task);
+      const request = requestFor(task);
+      const needsInput = stage.badge === 'attention';
       renderTasks();
       $('runningCount').textContent = taskCountLabel(tasks.filter(item => item.status === 'running').length);
       $('attentionCount').textContent = taskCountLabel(tasks.filter(item => item.status === 'attention').length);
@@ -685,15 +736,23 @@
       $('progressFill').style.width = `${progress.value}%`;
       $('progressTrack').setAttribute('aria-valuenow', progress.value);
       $('progressText').textContent = progress.text;
+      $('inputRequest').hidden = !needsInput;
+      $('requestTitle').textContent = request.title;
+      $('requestReason').textContent = request.reason;
+      $('requestScope').textContent = request.scope;
+      $('requestRisk').textContent = request.risk;
       $('actionIcon').textContent = stage.icon;
       $('actionTitle').textContent = stage.title;
       $('actionDescription').textContent = stage.desc;
       $('mainAction').textContent = stage.action;
       $('phoneTitle').textContent = stage.phoneTitle;
       $('phoneBody').textContent = stage.phoneBody;
+      $('phoneAcknowledge').textContent = stage.phonePrimary;
+      $('phoneOpen').textContent = stage.phoneSecondary;
       $('watchStatus').textContent = stage.watchStatus;
       $('watchTitle').textContent = task.name;
       $('watchBody').textContent = stage.watchBody;
+      $('watchAcknowledge').textContent = stage.watchAction;
       renderTimeline(task.events);
     }
 
@@ -751,6 +810,54 @@
       updatePaymentPhase(next);
     }
 
+    function approveActiveInput(source = 'Monitor') {
+      const task = activeTask();
+      if (stageFor(task).badge !== 'attention') {
+        showToast('No input required', `${task.name} does not currently need a decision.`);
+        return;
+      }
+      if (task.id === 'payment') {
+        updatePaymentPhase(2);
+        showToast(`Approved from ${source}`, 'Temporary test database access granted. Codex resumed and is verifying the result.');
+        return;
+      }
+      task.status = 'running';
+      task.label = 'Running';
+      task.duration = '08m 02s';
+      task.events = [
+        ['done', 'Review release contents', 'Found 12 commits to publish', '09:26'],
+        ['done', 'Receive release permission', `Approved from ${source}`, 'Now'],
+        ['current', 'Create release branch', 'Pushing release/v2.4.0', 'Now'],
+        ['', 'Generate release summary', 'Waiting for branch creation', '—']
+      ];
+      showToast(`Approved from ${source}`, 'Codex resumed and is creating release/v2.4.0.');
+      render();
+    }
+
+    function denyActiveInput() {
+      const task = activeTask();
+      if (stageFor(task).badge !== 'attention') return;
+      showToast('Request denied', `${task.name} remains paused. You can review the request and approve it later.`);
+    }
+
+    function performMainAction() {
+      const task = activeTask();
+      if (stageFor(task).badge === 'attention') return approveActiveInput('Monitor');
+      if (task.id === 'payment') return nextEvent();
+      if (task.id === 'release' && task.status === 'running') {
+        task.status = 'complete'; task.label = 'Verified complete'; task.duration = '10m 18s';
+        task.events = [
+          ['done', 'Review release contents', 'Found 12 commits to publish', '09:26'],
+          ['done', 'Receive release permission', 'Approved by user', '09:33'],
+          ['done', 'Create release branch', 'release/v2.4.0 pushed', '09:35'],
+          ['done', 'Generate release summary', 'Release task verified complete', '09:36']
+        ];
+        showToast('Release task complete', 'release/v2.4.0 was created and verified.');
+        return render();
+      }
+      showToast('Result opened', `${task.name} is already verified complete.`);
+    }
+
     function resetDemo(withToast = true) {
       selectedId = 'payment';
       const task = tasks[0];
@@ -766,13 +873,16 @@
     }
 
     $('nextEvent').addEventListener('click', nextEvent);
-    $('mainAction').addEventListener('click', nextEvent);
+    $('mainAction').addEventListener('click', performMainAction);
+    $('approveInput').addEventListener('click', () => approveActiveInput('Monitor'));
+    $('denyInput').addEventListener('click', denyActiveInput);
     $('resetDemo').addEventListener('click', () => resetDemo(true));
     $('sidebarTest').addEventListener('click', () => showToast('Test alert sent', 'Check the iPhone and Apple Watch previews on the right.'));
     $('retryAlert').addEventListener('click', () => showToast('Alert resent', 'The high-priority alert was sent to both devices again.'));
     $('openCodex').addEventListener('click', () => showToast('Opening Codex', 'Prototype behavior: the real product would open the matching task.'));
-    $('phoneOpen').addEventListener('click', () => showToast('Task details', activeTask().name + ' opened in DoneSure.'));
-    ['phoneAcknowledge', 'watchAcknowledge'].forEach(id => $(id).addEventListener('click', () => showToast('Alert acknowledged', 'Escalation stopped and the confirmation time was added to alert history.')));
+    $('phoneOpen').addEventListener('click', () => showToast(stageFor(activeTask()).badge === 'attention' ? 'Input request opened' : 'Task details', activeTask().name + ' opened in DoneSure.'));
+    $('phoneAcknowledge').addEventListener('click', () => stageFor(activeTask()).badge === 'attention' ? approveActiveInput('iPhone') : showToast('Status opened', activeTask().name + ' opened on iPhone.'));
+    $('watchAcknowledge').addEventListener('click', () => stageFor(activeTask()).badge === 'attention' ? approveActiveInput('Apple Watch') : showToast('Status opened', activeTask().name + ' opened from Apple Watch.'));
     document.querySelectorAll('.switch').forEach(sw => sw.addEventListener('click', () => {
       sw.classList.toggle('on');
       sw.setAttribute('aria-pressed', sw.classList.contains('on') ? 'true' : 'false');
