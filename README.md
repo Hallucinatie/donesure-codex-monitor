@@ -4,6 +4,8 @@ DoneSure is a mobile and Apple Watch companion for developers who run long Codex
 
 **Public prototype:** https://hallucinatie.github.io/donesure-codex-monitor/
 
+**Project document:** [Download the English Word document](docs/DoneSure_Project_Document.docx)
+
 ## The problem
 
 Long-running Codex tasks do not always finish while the user is at the computer. Important updates can be missed, including successful completion, failures, and requests for additional input. Repeatedly checking the desktop interrupts focused work and reduces the value of running tasks asynchronously.
@@ -53,6 +55,8 @@ dist/
   journey.html    Apple Watch interaction journey
   monitor.html    Interactive Codex task monitor
   watch.html      Focused watch prototype
+docs/
+  DoneSure_Project_Document.docx
 ```
 
 ## Status
