@@ -2,6 +2,8 @@
 
 DoneSure is a mobile and Apple Watch companion for developers who run long Codex tasks. When Codex finishes, encounters an error, or needs input, DoneSure sends a clear notification, summarizes the result, and lets the user continue the same task by voice.
 
+**Public prototype:** https://hallucinatie.github.io/donesure-codex-monitor/
+
 ## The problem
 
 Long-running Codex tasks do not always finish while the user is at the computer. Important updates can be missed, including successful completion, failures, and requests for additional input. Repeatedly checking the desktop interrupts focused work and reduces the value of running tasks asynchronously.
@@ -38,6 +40,10 @@ python3 -m http.server 8000 --directory dist
 ```
 
 Then open `http://localhost:8000`.
+
+## Deployment
+
+The contents of `dist/` are deployed automatically to GitHub Pages whenever the `main` branch is updated. The deployment workflow is defined in `.github/workflows/deploy-pages.yml`.
 
 ## Project structure
 
