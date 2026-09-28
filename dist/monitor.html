@@ -123,11 +123,50 @@
     .btn:focus-visible, .task:focus-visible, .switch:focus-visible { outline: 3px solid rgba(106,168,255,.6); outline-offset: 2px; }
 
     .overview { padding: 20px 24px 0; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; }
+    .overview[hidden], .workspace[hidden] { display: none; }
     .overview-card { min-width: 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(28,28,30,.72); }
     .overview-card span { display: block; color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
     .overview-card strong { display: block; margin-top: 3px; font-size: 1.08rem; }
     .overview-card.attention-card strong { color: #ffd29a; }
     .overview-card.complete-card strong { color: #8ef0ae; }
+
+    .history-view { padding: 20px 24px 28px; }
+    .history-view[hidden] { display: none; }
+    .history-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .history-summary div { padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(28,28,30,.72); }
+    .history-summary span { display: block; color: var(--muted); font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; }
+    .history-summary strong { display: block; margin-top: 3px; font-size: 1.04rem; }
+    .history-layout { display: grid; grid-template-columns: minmax(330px, .9fr) minmax(420px, 1.35fr); gap: 16px; align-items: start; }
+    .history-panel { border: 1px solid var(--line); border-radius: var(--radius); background: rgba(17,20,25,.92); overflow: hidden; }
+    .history-panel-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 19px 13px; }
+    .history-panel-head h2 { margin: 0; font-size: .92rem; }
+    .history-panel-head span { color: var(--muted); font-size: .74rem; }
+    .alert-list { display: grid; gap: 6px; padding: 0 9px 11px; }
+    .alert-row { width: 100%; display: grid; grid-template-columns: 10px minmax(0,1fr) auto; gap: 11px; align-items: center; padding: 12px 11px; border: 1px solid transparent; border-radius: 13px; background: transparent; text-align: left; cursor: pointer; }
+    .alert-row:hover { background: #161a20; }
+    .alert-row.active { background: #1b2026; border-color: #39414a; }
+    .alert-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .alert-dot.attention { background: var(--orange); box-shadow: 0 0 0 4px rgba(255,159,10,.1); }
+    .alert-dot.complete { background: var(--green); }
+    .alert-dot.failed { background: var(--red); }
+    .alert-row strong { display: block; font-size: .81rem; line-height: 1.3; }
+    .alert-row p { margin: 3px 0 0; color: var(--muted); font-size: .7rem; }
+    .alert-row time { color: #78828d; font-size: .68rem; white-space: nowrap; }
+    .history-detail { padding: 23px; }
+    .history-detail-top { display: flex; justify-content: space-between; gap: 18px; align-items: start; }
+    .history-detail h2 { margin: 8px 0 3px; font-size: 1.35rem; letter-spacing: -.03em; }
+    .history-detail .history-message { margin: 0; color: var(--muted); font-size: .83rem; }
+    .history-time { color: var(--muted); font-size: .72rem; white-space: nowrap; }
+    .history-route { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 20px 0; }
+    .history-route div { padding: 12px; border: 1px solid #303740; border-radius: 13px; background: #0d1014; }
+    .history-route span { display: block; color: var(--muted); font-size: .62rem; text-transform: uppercase; letter-spacing: .07em; }
+    .history-route strong { display: block; margin-top: 4px; font-size: .76rem; line-height: 1.35; }
+    .delivery-flow { padding: 15px; border: 1px solid #303740; border-radius: 14px; background: #0d1014; }
+    .delivery-flow > strong { display: block; margin-bottom: 12px; font-size: .8rem; }
+    .delivery-step { display: grid; grid-template-columns: 19px 1fr auto; gap: 9px; align-items: center; min-height: 34px; color: #dfe4e9; font-size: .75rem; }
+    .delivery-step i { width: 17px; height: 17px; display: grid; place-items: center; border-radius: 50%; background: rgba(48,209,88,.14); color: #8ef0ae; font-style: normal; font-size: .65rem; }
+    .delivery-step time { color: var(--muted); font-size: .66rem; }
+    .history-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
 
     .workspace { padding: 16px 24px 24px; display: grid; grid-template-columns: minmax(260px, .82fr) minmax(460px, 1.55fr) minmax(260px, .8fr); gap: 18px; align-items:start; }
     .panel { border: 1px solid var(--line); background: rgba(17,20,25,.92); border-radius: var(--radius); min-width: 0; overflow: hidden; }
@@ -368,6 +407,8 @@
       .metric:last-child { grid-column: 1 / -1; }
       .overview-card { padding: 12px; }
       .overview-card strong { font-size: .96rem; }
+      .history-layout { grid-template-columns: 1fr; }
+      .history-route { grid-template-columns: 1fr; }
       .device-stage { grid-template-columns: 1fr; }
       .action-buttons .btn { flex: 1 1 100%; }
       .request-meta { grid-template-columns: 1fr; }
@@ -394,10 +435,10 @@
       <div>
         <div class="nav-label">Workspace</div>
         <nav class="nav">
-          <button class="active"><span>Task Monitor</span><span class="count">3</span></button>
-          <button><span>Alert History</span><span class="count">8</span></button>
-          <button><span>Devices & Channels</span></button>
-          <button><span>Rules</span></button>
+          <button class="active" id="navMonitor"><span>Task Monitor</span><span class="count">3</span></button>
+          <button id="navHistory"><span>Alert History</span><span class="count">8</span></button>
+          <button id="navDevices"><span>Devices & Channels</span></button>
+          <button id="navRules"><span>Rules</span></button>
         </nav>
       </div>
 
@@ -412,8 +453,8 @@
       <header class="topbar">
         <div>
           <div class="eyebrow">DoneSure · Live workspace</div>
-          <h1>Task Monitor</h1>
-          <p class="topbar-copy">Track long-running Codex work and act only when attention is needed.</p>
+          <h1 id="pageTitle">Task Monitor</h1>
+          <p class="topbar-copy" id="pageSubtitle">Track long-running Codex work and act only when attention is needed.</p>
         </div>
         <div class="top-actions">
           <div class="connection"><span class="dot"></span>Mac Studio · Online</div>
@@ -423,14 +464,47 @@
         </div>
       </header>
 
-      <section class="overview" aria-label="Workspace overview">
+      <section class="overview" id="monitorOverview" aria-label="Workspace overview">
         <div class="overview-card"><span>Running</span><strong id="runningCount">1 task</strong></div>
         <div class="overview-card attention-card"><span>Needs attention</span><strong id="attentionCount">1 task</strong></div>
         <div class="overview-card complete-card"><span>Verified complete</span><strong id="completeCount">1 task</strong></div>
         <div class="overview-card"><span>Connected devices</span><strong>2 online</strong></div>
       </section>
 
-      <section class="workspace" aria-label="DoneSure task monitoring prototype">
+      <section class="history-view" id="historyView" aria-label="Alert history" hidden>
+        <div class="history-summary">
+          <div><span>Alerts today</span><strong>8</strong></div>
+          <div><span>Action required</span><strong>2</strong></div>
+          <div><span>Delivered to Watch</span><strong>8 / 8</strong></div>
+        </div>
+        <div class="history-layout">
+          <section class="history-panel" aria-label="Recent alerts">
+            <div class="history-panel-head"><h2>Recent alerts</h2><span>Newest first</span></div>
+            <div class="alert-list" id="alertList"></div>
+          </section>
+          <section class="history-panel history-detail" aria-live="polite">
+            <div class="history-detail-top">
+              <div><span class="badge attention" id="historyBadge">Needs input</span><h2 id="historyTitle">Database access requested</h2><p class="history-message" id="historyMessage">Codex paused until you decide whether to allow temporary staging database access.</p></div>
+              <time class="history-time" id="historyTime">Today · 09:40</time>
+            </div>
+            <div class="history-route">
+              <div><span>Task</span><strong id="historyTask">Refactor payment module</strong></div>
+              <div><span>Channels</span><strong id="historyChannels">iPhone + Apple Watch</strong></div>
+              <div><span>Outcome</span><strong id="historyOutcome">Awaiting decision</strong></div>
+            </div>
+            <div class="delivery-flow">
+              <strong>Delivery activity</strong>
+              <div id="deliverySteps"></div>
+            </div>
+            <div class="history-actions">
+              <button class="btn primary" id="historyOpenTask">Open related task</button>
+              <button class="btn" id="historyResend">Resend alert</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="workspace" id="monitorWorkspace" aria-label="DoneSure task monitoring prototype">
         <section class="panel" aria-label="Task list">
           <div class="panel-head"><h2>Codex Tasks</h2><small id="taskCount">3 tasks</small></div>
           <div class="task-list" id="taskList"></div>
@@ -658,12 +732,62 @@
       { status: 'complete', label: 'Verified complete', badge: 'complete', action: 'Run demo again', icon: '✓', title: 'Task is truly complete', desc: 'All tests passed. The result was sent to your iPhone and Apple Watch.', phoneTitle: 'Task verified complete', phoneBody: 'Refactor payment module · 68 tests passed in 21 minutes.', phonePrimary: 'View result', phoneSecondary: 'Open task', watchStatus: 'COMPLETED', watchBody: 'All 68 tests passed.', watchAction: 'View result' }
     ];
 
+    const alerts = [
+      { id: 'db-input', taskId: 'payment', type: 'attention', label: 'Needs input', title: 'Database access requested', message: 'Codex paused until you decide whether to allow temporary staging database access.', time: 'Today · 09:40', channels: 'iPhone + Apple Watch', outcome: 'Awaiting decision', steps: [['Sent to iPhone', '09:40:01'], ['Mirrored to Apple Watch', '09:40:03'], ['Waiting for your response', 'Now']] },
+      { id: 'release-input', taskId: 'release', type: 'attention', label: 'Needs input', title: 'Release permission required', message: 'Codex needs approval before pushing the release/v2.4.0 branch to the remote repository.', time: 'Today · 09:33', channels: 'iPhone + Apple Watch', outcome: 'Awaiting decision', steps: [['Sent to iPhone', '09:33:02'], ['Mirrored to Apple Watch', '09:33:04'], ['Reminder scheduled', '09:38']] },
+      { id: 'login-complete', taskId: 'bug', type: 'complete', label: 'Verified complete', title: 'Login regression fixed', message: 'The refresh race was fixed and all 126 regression tests passed.', time: 'Today · 09:19', channels: 'iPhone + Apple Watch', outcome: 'Acknowledged on Watch', steps: [['Completion verified', '09:19:00'], ['Delivered to both devices', '09:19:03'], ['Acknowledged on Apple Watch', '09:20:11']] },
+      { id: 'payment-progress', taskId: 'payment', type: 'complete', label: 'Progress update', title: 'Core refactor completed', message: 'Checkout logic was moved into the new payment service. Tests started automatically.', time: 'Today · 09:31', channels: 'iPhone', outcome: 'Delivered', steps: [['Update created', '09:31:18'], ['Sent to iPhone', '09:31:19'], ['Delivered', '09:31:20']] },
+      { id: 'release-ready', taskId: 'release', type: 'complete', label: 'Ready', title: 'Release contents reviewed', message: 'Twelve commits were collected and the release notes draft is ready.', time: 'Today · 09:26', channels: 'iPhone', outcome: 'Delivered', steps: [['Summary generated', '09:26:03'], ['Sent to iPhone', '09:26:04'], ['Delivered', '09:26:05']] },
+      { id: 'login-failed', taskId: 'bug', type: 'failed', label: 'Failed', title: 'First regression run failed', message: 'Two mobile token-refresh tests failed before Codex applied the final fix.', time: 'Today · 09:08', channels: 'iPhone + Apple Watch', outcome: 'Opened on iPhone', steps: [['Failure detected', '09:08:12'], ['Delivered to both devices', '09:08:15'], ['Opened on iPhone', '09:09:02']] },
+      { id: 'login-reproduced', taskId: 'bug', type: 'complete', label: 'Progress update', title: 'Login issue reproduced', message: 'Codex isolated a race condition in the token refresh flow.', time: 'Today · 08:51', channels: 'iPhone', outcome: 'Delivered', steps: [['Update created', '08:51:21'], ['Sent to iPhone', '08:51:22'], ['Delivered', '08:51:23']] },
+      { id: 'monitor-connected', taskId: 'payment', type: 'complete', label: 'System', title: 'Apple Watch connected', message: 'Notification mirroring and high-priority alert delivery are active.', time: 'Today · 08:42', channels: 'Apple Watch', outcome: 'Connected', steps: [['Pairing detected', '08:42:06'], ['Notification channel tested', '08:42:09'], ['Connection verified', '08:42:10']] }
+    ];
+
     let selectedId = 'payment';
+    let selectedAlertId = 'db-input';
     let toastTimer;
 
     const $ = (id) => document.getElementById(id);
 
     function activeTask() { return tasks.find(t => t.id === selectedId); }
+    function activeAlert() { return alerts.find(alert => alert.id === selectedAlertId); }
+
+    function switchView(view) {
+      const history = view === 'history';
+      $('monitorOverview').hidden = history;
+      $('monitorWorkspace').hidden = history;
+      $('historyView').hidden = !history;
+      $('navMonitor').classList.toggle('active', !history);
+      $('navHistory').classList.toggle('active', history);
+      $('pageTitle').textContent = history ? 'Alert History' : 'Task Monitor';
+      $('pageSubtitle').textContent = history ? 'Review every alert, delivery channel, and response in one place.' : 'Track long-running Codex work and act only when attention is needed.';
+      $('resetDemo').hidden = history;
+      $('nextEvent').hidden = history;
+      if (history) renderHistory();
+    }
+
+    function renderHistory() {
+      const alert = activeAlert();
+      $('alertList').innerHTML = alerts.map(item => `
+        <button class="alert-row ${item.id === selectedAlertId ? 'active' : ''}" data-alert-id="${item.id}">
+          <span class="alert-dot ${item.type}"></span>
+          <span><strong>${item.title}</strong><p>${tasks.find(task => task.id === item.taskId).name} · ${item.outcome}</p></span>
+          <time>${item.time.replace('Today · ', '')}</time>
+        </button>`).join('');
+      document.querySelectorAll('.alert-row').forEach(row => row.addEventListener('click', () => {
+        selectedAlertId = row.dataset.alertId;
+        renderHistory();
+      }));
+      $('historyBadge').className = `badge ${alert.type}`;
+      $('historyBadge').textContent = alert.label;
+      $('historyTitle').textContent = alert.title;
+      $('historyMessage').textContent = alert.message;
+      $('historyTime').textContent = alert.time;
+      $('historyTask').textContent = tasks.find(task => task.id === alert.taskId).name;
+      $('historyChannels').textContent = alert.channels;
+      $('historyOutcome').textContent = alert.outcome;
+      $('deliverySteps').innerHTML = alert.steps.map(([label, time]) => `<div class="delivery-step"><i>✓</i><span>${label}</span><time>${time}</time></div>`).join('');
+    }
     function stageFor(task) {
       if (task.id === 'payment') return stages[task.phase];
       if (task.status === 'attention') return { ...stages[1], phoneBody: task.name + ' · Release permission required.', watchBody: 'Release permission required.' };
@@ -873,6 +997,17 @@
     }
 
     $('nextEvent').addEventListener('click', nextEvent);
+    $('navMonitor').addEventListener('click', () => switchView('monitor'));
+    $('navHistory').addEventListener('click', () => switchView('history'));
+    $('navDevices').addEventListener('click', () => showToast('Devices & Channels', 'This prototype currently previews iPhone and Apple Watch delivery in Task Monitor.'));
+    $('navRules').addEventListener('click', () => showToast('Notification rules', 'Alerts are sent on completion, failure, or when Codex needs your input.'));
+    $('historyOpenTask').addEventListener('click', () => {
+      selectedId = activeAlert().taskId;
+      switchView('monitor');
+      render();
+      showToast('Related task opened', `${activeTask().name} is now selected.`);
+    });
+    $('historyResend').addEventListener('click', () => showToast('Alert resent', `${activeAlert().title} was sent to ${activeAlert().channels}.`));
     $('mainAction').addEventListener('click', performMainAction);
     $('approveInput').addEventListener('click', () => approveActiveInput('Monitor'));
     $('denyInput').addEventListener('click', denyActiveInput);
